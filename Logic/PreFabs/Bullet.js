@@ -1,0 +1,1 @@
+Bullet=function(t,e,a){Phaser.Sprite.call(this,t.game,e,a,"bullet"),this.state=t,this.game=t.game,this.game.physics.arcade.enable(this),this.animations.add("be",[0],1,!1),this.enableBody=!0,this.scale.set(-.5),this.body.immovable=!0,this.body.allowGravity=!1,this.play("be")},Bullet.prototype=Object.create(Phaser.Sprite.prototype),Bullet.prototype.constructor=Bullet;

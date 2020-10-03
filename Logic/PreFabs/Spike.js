@@ -1,0 +1,1 @@
+Spike=function(e,t,i){Phaser.Sprite.call(this,e.game,t,i,"spike"),this.state=e,this.game=e.game,this.game.physics.arcade.enable(this),this.animations.add("be",[0],1,!1),this.enableBody=!0,this.scale.set(1),this.body.immovable=!0,this.body.allowGravity=!1,this.play("be")},Spike.prototype=Object.create(Phaser.Sprite.prototype),Spike.prototype.constructor=Spike;

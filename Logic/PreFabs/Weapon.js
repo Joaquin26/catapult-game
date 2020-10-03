@@ -1,0 +1,1 @@
+Weapon=function(e,t,a){Phaser.Sprite.call(this,e.game,t,a,"weapon"),this.state=e,this.game=e.game,this.game.physics.arcade.enable(this),this.animations.add("be",[0],1,!1),this.enableBody=!0,this.scale.set(.35),this.body.immovable=!0,this.body.allowGravity=!1,this.play("be")},Weapon.prototype=Object.create(Phaser.Sprite.prototype),Weapon.prototype.constructor=Weapon;

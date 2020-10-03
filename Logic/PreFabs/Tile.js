@@ -1,0 +1,1 @@
+Tile=function(e,t,i){Phaser.Sprite.call(this,e.game,t,i),this.state=e,this.game=e.game,this.game.physics.arcade.enable(this),this.enableBody=!0,this.body.immovable=!0,this.body.allowGravity=!1},Tile.prototype=Object.create(Phaser.Sprite.prototype),Tile.prototype.constructor=Tile;

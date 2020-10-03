@@ -1,0 +1,1 @@
+Girl=function(t,e,i){Phaser.Sprite.call(this,t.game,e,i,"girl"),this.state=t,this.game=t.game,this.game.physics.arcade.enable(this),this.animations.add("be",[0],3,!0),this.health=130,this.enableBody=!0,this.body.setSize(192,240,0,0),this.body.allowGravity=!1,this.play("be")},Girl.prototype=Object.create(Phaser.Sprite.prototype),Girl.prototype.constructor=Girl;

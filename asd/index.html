@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<!-- <link rel="stylesheet" href="./CSS/style.css"> -->
+	<link rel="stylesheet" href="./CSS/home.css">
+	<script src="webOSTVjs-1.1.0/webOSTV.js" charset="utf-8"></script>
+	<script src="webOSTVjs-1.1.0/webOSTV-dev.js" charset="utf-8"></script>
+	<script type="text/javascript" src="./Logic/jquery-1.11.0.min.js"></script>
+	<script src="./Logic/synapse.js" charset="utf-8"></script>
+	<script src="./Logic/variables.js" charset="utf-8"></script>
+	<script src="./Logic/discover.js" charset="utf-8"></script>
+
+	<script>
+		var dots = window.setInterval(function () {
+			var wait = document.getElementById("wait");
+			if (wait.innerHTML.length > 4)
+				wait.innerHTML = "";
+			else
+				wait.innerHTML += " &#9632;";
+		}, 1000);
+	</script>
+</head>
+
+<body id="body">
+	<div class="speech-bubble">
+		<h1>Sugerencia!</h1>
+		<p>Para disfrutar del juego desactiva el "Protector de Pantalla" en:</p>
+		<p>Ajustes > General > Protector de Pantalla on/off</p>
+	</div>
+	<div class="middle-top-content">
+		<img id="logo-init" alt="AOE-LOGO" />
+		<br />
+		<img id="logo-title-init" alt="AOE-LOGO" />
+	</div>
+	<div class="middle-bottom-content">
+		<div class="gdbox step1-content">
+			<div class="title step1-title">
+				<img class="step-title" id="step1-title-logo">
+				<img class="step-title-img" id="step1-title-google-play">
+			</div>
+			<div class="gbox step1-box">
+				<div id="step1-box-images">
+					<img id="qr">
+					<img id="logo-mobile">
+				</div>
+				<div id="step1-text">
+					<div>Escanea el codigo QR y descarga la app</div>
+					<div>O</div>
+					<div>Busca el juego Aliens On Earth desde Google Play</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="gdbox step2-content">
+			<div class="title step2-title">
+				<img class="step-title" id="step2-title-logo">
+				<img class="step-title-img" id="step2-title-android">
+			</div>
+			<div class="gbox step2-box">
+				<img id="window-mobile">
+				<div id="step2-text">
+					<div>Ingresa a la app e inicia una sala</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="gdbox step3-content">
+			<div class="title step3-title">
+				<img class="step-title" id="step3-title-logo">
+				<img class="step-title-img" id="step3-title-lg">
+			</div>
+			<div class="gbox step3-box">
+				<div id="step3-box-black">
+					<div>
+						<input class="btn-refresh" id="btn-refresh" type="button" onclick="findServers();"
+							value="Buscar" />
+						<input class="btn-refresh" id="btn-reload" type="button" onclick="location.reload();"
+							value="Refresh" />
+					</div>
+					<h1 class="title" id="title-rooms">Salas Disponibles</h1>
+					<div id="availableServers"></div>
+					<div style="color:white" id="box-loading">
+						Cargando
+						<span id="wait" style="color:white">&#9632;</span>
+					</div>
+				</div>
+				<div id="step3-text">
+					<div>Presiona "Buscar" y espera por una sala</div>
+					<div style="margin-top: 0.5rem">Presiona "Refresh" para recargar</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+
+</html>

@@ -1,0 +1,139 @@
+body {
+    background-color: black;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    margin: 0;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+body div {
+    height: 100%;
+    vertical-align: top;
+}
+
+body .litle-star {
+    display: block;
+    position: absolute;
+    width: 0.8rem;
+    height: 0.8rem;
+    background-color: white;
+}
+
+body .star {
+    display: block;
+    position: absolute;
+    content: url("../Assets/images/estrella1.png");
+}
+
+body .middle-content {
+    margin-left: 30%;
+    margin-right: 30%;
+    width: 40%;
+    text-align: center;
+    position: relative;
+    z-index: 10px;
+}
+
+body .middle-content #logo {
+    content: url("../Assets/images/logo.png");
+    margin-top: 12%;
+    min-width: 75%;
+    max-width: 75%;
+}
+
+body .middle-content #logo-title {
+    display: block;
+    content: url("../Assets/images/title.png");
+    margin-top: 5.5rem;
+    min-width: 100%;
+    max-width: 100%;
+}
+
+body .middle-content .btn-refresh {
+    display: block;
+    margin: 3rem auto 2rem auto;
+    border: none;
+    background-color: transparent;
+    color: white;
+    letter-spacing: 0.4px;
+    font-weight: bolder;
+    font-size: 1.6em;
+    text-transform: uppercase;
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: bold;
+    padding: 3px 1px;
+    transition: all 0.1s ease-in;
+}
+
+.btn-refresh:hover {
+    transform: translateY(-3px);
+    border-bottom: 5px white solid !important;
+    transition: all 0.2s ease-in;
+}
+
+body .middle-content .title {
+    color: white;
+    font-family: 'Courier New', Courier, monospace;
+    text-transform: uppercase;
+    font-size: 1.8em;
+}
+
+body .middle-content .btn-server {
+    background-color: transparent;
+    border: none;
+    color: white;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 1.4em;
+    margin-bottom: 0.5rem;
+}
+
+.btn-server:hover {
+    transform: translateY(-3px);
+    border-bottom: 5px white solid !important;
+    transition: all 0.2s ease-in;
+}
+
+/* mover esto a otro archivo*/
+
+body .middle-content #logo-init {
+    content: url("../Assets/images/logo.png");
+    margin-top: 12%;
+    min-width: 50%;
+    max-width: 50%;
+}
+
+body .middle-content #logo-title-init {
+    display: block;
+    content: url("../Assets/images/title.png");
+    margin-top: 2rem;
+    margin-left: 4.5rem;
+    text-align: center;
+    min-width: 75%;
+    max-width: 75%;
+}
+
+#qr {
+    max-width: 200px;
+    margin-top: 4rem;
+    content: url("../Assets/images/QR.png");
+}
+
+.btn-next {
+    top: 50%;
+    position: absolute;
+    right: 3rem;
+    border: none;
+    background-color: transparent;
+    color: white;
+    font-size: 1.6em;
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: bold;
+}
+
+.btn-next:hover {
+    transform: translateY(-3px);
+    border-bottom: 5px white solid !important;
+    transition: all 0.2s ease-in;
+}

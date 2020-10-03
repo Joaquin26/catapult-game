@@ -1,0 +1,10 @@
+{
+    "id": "com.upc.aoe",
+    "version": "1.0.40",
+    "vendor": "Universidad Peruana de Ciencias Aplicadas",
+    "type": "web",
+    "main": "index.html",
+    "title": "Explosion Man",
+    "icon": "./Assets/icons/icono_tv.png",
+    "largeIcon": "./Assets/icons/icono_tv_large.png"
+}

@@ -1,0 +1,31 @@
+{
+    "level2": [
+        {
+            "x": 680,
+            "y": 3100,
+            "isLong": false
+        }
+    ],
+    "level3": [
+        {
+            "x": 780,
+            "y": 1020,
+            "isLong": true
+        }
+    ],
+    "level4": [
+        {
+            "x": 4224,
+            "y": 1920,
+            "isLong": true
+        }
+    ],
+    "level5": [
+        {
+            
+            "x": 2400,
+            "y": 1920,
+            "isLong": true
+        }
+    ]
+}

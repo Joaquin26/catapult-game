@@ -1,0 +1,1 @@
+Lava=function(a,t,e,i,o){Phaser.Sprite.call(this,a.game,t,e,o?"lava_long":"lava"),this.state=a,this.game=a.game,this.game.physics.arcade.enable(this),this.animations.add("move",[0,1,2],4,!0),this.enableBody=!0,this.body.immovable=!0,this.body.allowGravity=!1,this.play("move")},Lava.prototype=Object.create(Phaser.Sprite.prototype),Lava.prototype.constructor=Lava;

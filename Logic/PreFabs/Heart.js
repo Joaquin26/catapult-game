@@ -1,0 +1,1 @@
+Heart=function(t,e,a){Phaser.Sprite.call(this,t.game,e,a,"heart"),this.state=t,this.game=t.game,this.game.physics.arcade.enable(this),this.animations.add("be",[0],1,!1),this.enableBody=!0,this.scale.set(.35),this.body.immovable=!0,this.body.allowGravity=!1,this.play("be")},Heart.prototype=Object.create(Phaser.Sprite.prototype),Heart.prototype.constructor=Heart;
