@@ -63,6 +63,34 @@ video {
   border: none;
 }
 
+.divSelector {
+  position: absolute;
+  left: 1280px;
+  top: 80px;
+  z-index: 3;
+}
+
+.divJugar1 {
+  position: absolute;
+  left: 1450px;
+  top: 80px;
+  z-index: 3;
+}
+
+.divJugar2 {
+  position: absolute;
+  left: 1450px;
+  top: 220px;
+  z-index: 3;
+}
+
+.divReglas {
+  position: absolute;
+  left: 1450px;
+  top: 370px;
+  z-index: 3;
+}
+
 .divMenuPrincipal {
   position: absolute;
   left: 0px;
