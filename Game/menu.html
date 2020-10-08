@@ -29,7 +29,7 @@
     <div style="position: relative;">
         <div class="divMenuPrincipal"> <img src="../Assets/menu/MENU.png" height="100%" width="100%"></img> </div>
         
-        <div class="divSelector"> <img src="../Assets/menu/SELECTOR.png" height="70%" width="70%"></img> </div>
+        <div class="divSelector"> <img src="../Assets/menu/SELECTOR.png" height="70%" width="70%" id="imgSelector"></img> </div>
 
         <div class="divJugar1"> <img src="../Assets/menu/JUGAR1.png" height="70%" width="70%"></img> </div>
         <div class="divJugar2"> <img src="../Assets/menu/JUGAR2.png" height="70%" width="70%"></img> </div>
@@ -42,7 +42,39 @@
                     onclick="goInstructions();"> </div>
             <div class="divButtonSalir"> <input class="buttonSalir" id="boton" type="button" onclick="goBackHome();"> </div>
         -->
+
+        <script>
+            
+            var selectorStyle = document.querySelector(".divSelector");
+            selectorStyle.style.top = 80 + 'px';
+            console.log("posición actual: "+ parseInt(selectorStyle.style.top));
+
+            document.onkeydown = function(e){
+                if(e.keyCode == 13 || e.keyCode == 32){
+                    if(parseInt(selectorStyle.style.top) == 80){
+                        console.log("80!");
+                        establishConnectionGame();
+                    }
+                    if(parseInt(selectorStyle.style.top) == 230){
+                        onclick="goInstruccions()";
+                    }
+                    if(parseInt(selectorStyle.style.top) == 380){
+                        onclick="goInstruccions()";
+                    }
+                }
+                if(e.keyCode == 38){
+                    if(parseInt(selectorStyle.style.top) > 80 && parseInt(selectorStyle.style.top) < 400){
+                        selectorStyle.style.top = (parseInt(selectorStyle.style.top) - 150) + 'px';
+                    }
+                }
+                if(e.keyCode == 40){
+                    if(parseInt(selectorStyle.style.top) < 370){
+                        selectorStyle.style.top = (parseInt(selectorStyle.style.top) + 150) + 'px';
+                    }
+                }
+                console.log("pos x: "+selectorStyle.style.top);
+            }
+        </script>
     </div>
 </body>
-
 </html>

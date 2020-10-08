@@ -80,14 +80,14 @@ video {
 .divJugar2 {
   position: absolute;
   left: 1450px;
-  top: 220px;
+  top: 230px;
   z-index: 3;
 }
 
 .divReglas {
   position: absolute;
   left: 1450px;
-  top: 370px;
+  top: 380px;
   z-index: 3;
 }
 
