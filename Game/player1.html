@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>MENU</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script type="text/javascript" src="../Logic/jquery-1.11.0.min.js"></script>
+    <link rel="stylesheet" href="../CSS/style.css">
+    <script type="text/javascript">
+        var webSocket = {};
+        var obj;
+        var cursor = "";
+        var audio = new Audio("../Assets/music/intro_sfx.mp3");
+        audio.addEventListener('ended', function () {
+            this.currentTime = 0;
+            this.play();
+        }, false);
+        audio.play();
+    </script>
+    <script src="../Phaser/phaser.min.js" charset="utf-8"></script>
+    <script src="../Logic/connect.js"></script>
+
+</head>
+
+
+<body style="background-image: url('../Assets/menu/FORNAME1PLAYER.jpg'); background-repeat: no-repeat;">
+    <div style="position: relative;">
+        <div style="position: relative; height: 220px; left: 300px;">
+            <!--
+            <img src="../Assets/menu/FORNAME1PLAYER.png">
+            -->
+        </div>
+        
+        <div style="text-align: center;"><input style="height: 25px; background-color: transparent; border: none; outline: none; border-bottom:1px solid #fff; color: #555; font-style: italic; font-size: 24px;" type="text" name="txtNombre" id="txtNombre" value="Jugador1" onfocus="this.value='';" size="18"></input></div>
+        <div style="height: 20px;"></div>
+        <div style="text-align: center;"><input type="button" name="btnNombre" id="btnNombre" value="Go" class="boton_1"></input></div>
+    </div>
+
+        <!--
+            <div><img src="img/ball1.png" alt="ball"></div>
+            <div class="divButtonStart"> <input class="buttonStart" id="boton" type="button"
+                    onclick="establishConnectionGame();"> </div>
+            <div class="divButtonOpciones"> <input class="buttonOpciones" id="boton" type="button"
+                    onclick="goInstructions();"> </div>
+            <div class="divButtonSalir"> <input class="buttonSalir" id="boton" type="button" onclick="goBackHome();"> </div>
+        -->
+
+        <script>
+            
+        </script>
+    </div>
+</body>
+</html>

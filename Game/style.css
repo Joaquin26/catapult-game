@@ -42,3 +42,25 @@ h2 {
   color:white;
   padding: 8px 4px;
 }
+
+.row{
+  display: inline-block;
+}
+
+.column{
+  display: inline-block;
+  width: 49.85%;
+}
+
+.space-block{
+  height: 20px;
+}
+
+.tableRow{
+  display: table-row;
+}
+
+.div-2{
+  width: 40%;
+  background-color: cornflowerblue;
+}

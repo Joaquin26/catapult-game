@@ -122,3 +122,18 @@ video {
 .imgOver {
   width: 100%;
 }
+
+.boton_1{
+  text-decoration: none;
+  padding: 5px;
+  padding-left: 70px;
+  padding-right: 70px;
+  font-family: helvetica;
+  font-weight: 50;
+  font-size: 18px;
+  font-style: italic;
+  color: white;
+  background-color: #007bb5;
+  border-radius: 10px;
+  border: 1px solid white;
+}
