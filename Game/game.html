@@ -24,19 +24,11 @@
   <script src="../Logic/connect.js"></script>
 </head>
 
-
-
 <body>
 
   <div id="input-box" style="display: none">
 
-
     <input id="text" type="hidden" value=" " style="width:10%" /><br />
-
-
-
-
-    </script>
 
     <div id="qrcode" style="width:100px; height:100px; margin-top:1px;"></div>
 
@@ -90,17 +82,15 @@
 
 
       constructor() {
-        
         super('Scene1');
-        /*
+
         this.accumulator = 0;
         this.fps = 30;  // Physics checks 60 times/s
         this.physicsTimestep = 1000 / this.fps;
-        */
+
       }
 
       init(data) {
-        /*
         this.personajeP1 = data.personajeSelectP1;
         this.personajeP2 = data.personajeSelectP2;
         this.personajeP3 = data.personajeSelectP3;
@@ -118,11 +108,11 @@
         this.mapaTipo = data.mapaTipo;
         this.designerMode = data.designerMode;
         this.dificultad = data.dificultad;
-        */
+
       }
 
       preload() {
-        /*
+
         this.tematicaSeleccionada = this.tematica;
         this.colocarBomba = 0;
         this.designer = this.designerData;
@@ -179,12 +169,12 @@
         this.brick = null;
         this.playerBulletLive = false;
         this.playerDirection = 'up';
-        */
+
 
         //INTERNET
 
 
-        /*
+
         this.load.image('bg', 'https://i.ibb.co/tz3L9Bn/jugador.png');
         this.load.image('enemigo', 'https://i.ibb.co/tsc83Qn/enemigo.png');
         this.load.image('enemigoquemado', 'https://i.ibb.co/wcjcPBY/enemigoquemado.png');
@@ -229,8 +219,8 @@
           this.load.image('pisonegro', 'https://i.ibb.co/ZdCCNp8/pisonegro.png');
           this.load.image('wallkill', 'https://i.ibb.co/VSvdY4P/wall2.png')
         }
-        */
-        /*
+
+
         this.load.image('wall3', 'https://i.ibb.co/9y4cTjD/wall3.png');
 
         this.load.image('wall4', 'https://i.ibb.co/qpqvwcN/wall5.png');
@@ -288,7 +278,7 @@
         this.load.audio('ending', 'https://sndup.net/8s58/ending.mp3');
 
         this.load.audio('lose', 'https://sndup.net/7j9h/wallFall.mp3');
-        */
+
 
 
         //LOCAL
@@ -407,11 +397,11 @@
       create() {
 
         this.mensajeganar = 0;
-        /*
+
         if (localStorage.getItem("mapasCreados") == null)
           localStorage.setItem("mapasCreados", 1);
-        */
-        /*
+
+
         //MAPAS_PREDEFINIDOS
         localStorage.setItem(-1, "0,0,99;1,1,0;1,2,0;1,3,0;1,4,0;1,5,0;1,6,0;1,7,0;1,8,0;1,9,0;1,10,0;1,11,0;2,11,0;3,11,0;4,11,0;5,11,0;6,11,0;7,11,0;8,11,0;9,11,0;12,11,0;13,11,0;14,11,0;15,11,0;16,11,0;17,11,0;18,11,0;19,11,0;20,11,0;21,10,0;21,11,0;21,9,0;21,8,0;21,7,0;21,6,0;21,5,0;21,4,0;21,3,0;21,2,0;21,1,0;20,1,0;19,1,0;18,1,0;17,1,0;16,1,0;15,1,0;14,1,0;13,1,0;12,1,0;11,1,0;10,1,0;9,1,0;8,1,0;7,1,0;6,1,0;5,1,0;4,1,0;3,1,0;2,1,0;3,9,6;4,9,6;5,9,6;6,9,6;7,9,6;8,9,6;9,9,6;10,9,6;11,9,6;12,9,6;13,9,6;14,9,6;15,9,6;16,9,6;17,9,6;18,9,6;19,9,6;19,8,6;19,7,6;19,6,6;19,5,6;19,4,6;19,3,6;18,3,6;17,3,6;16,3,6;15,3,6;14,3,6;13,3,6;12,3,6;11,3,6;10,3,6;9,3,6;8,3,6;7,3,6;6,3,6;5,3,6;4,3,6;3,3,6;3,4,6;3,8,6;3,5,6;3,7,6;4,4,2;4,5,2;4,6,2;4,7,2;4,8,2;5,8,2;5,7,2;5,6,2;5,5,2;5,4,2;7,4,3;7,5,3;7,8,3;7,7,3;18,8,1;18,4,1;11,4,1;11,8,1;7,6,1;");
 
@@ -526,10 +516,10 @@
         this.countExplosion2 = 0;
         this.countExplosion3 = 0;
         this.countExplosion4 = 0;
-        */
 
 
-        /*
+
+
         //jugadores
         if (this.jugadoresTotal >= 1) {
           this.jugador1 = this.add.text(32 + 32, 216 + 96, this.nombreJ1, { fontFamily: '"Arial Black"' });
@@ -746,13 +736,13 @@
 
         this.reloj = this.add.text(64, 128, this.relojInt, { fontFamily: '"Arial Black"' });
         this.reloj.setFontSize(64);
-        */
 
 
 
 
 
-        /*
+
+
         this.bombasFull = this.physics.add.staticGroup();
 
         this.bombasFull2 = this.physics.add.staticGroup();
@@ -811,7 +801,6 @@
         this.wallkill = this.physics.add.staticGroup();
 
         this.pisonegro = this.physics.add.staticGroup();
-        */
 
         //random
         /*   for (var i = 0; i < 600; i++)
@@ -841,7 +830,6 @@
       */
 
         //Modo no aleatorio
-        /*
         if (this.designer == 0) {
           for (var i = -1; i < 22; i++) {
             for (var j = 1; j < 14; j++) {
@@ -908,11 +896,11 @@
             }
           }
         }
-        */
 
 
 
-        /*
+
+
         for (var i = 1; i < 15; i++) {
           this.boxFuerte2.create(12 * 32 - 32 - 32 + 32, 32 + i * 64, 'wall4');
           this.boxFuerte2.create(12 * 32 - 32 - 32 - 32, 32 + i * 64, 'wall4');
@@ -945,11 +933,10 @@
         for (var i = 0; i < 25; i++) {
           this.boxFuerteSprite.create(11 * 32 + 64 * i, 896 + 32 + 32, 'wall2');
         }
-        */
+
 
 
         // this.myShip = new Ship(this, 400, 500);
-        /*
         if (this.personajeP1 == 1)
           this.myShip = this.physics.add.sprite(420, 130, 'jugadorAzul');
         if (this.personajeP1 == 2)
@@ -968,16 +955,16 @@
           this.myShip = this.physics.add.sprite(420, 130, 'jugadorNegro');
         if (this.personajeP1 == 9)
           this.myShip = this.physics.add.sprite(420, 130, 'jugadorMorado');
-        */
 
 
-        /*
+
+
         this.myShip2 = this.physics.add.sprite(5000, 130, 'ship2');
         this.myShip3 = this.physics.add.sprite(5000, 130, 'ship3');
         this.myShip4 = this.physics.add.sprite(5000, 130, 'ship4');
-        */
 
-        /*
+
+
         if (this.jugadoresTotal >= 2) {
           this.myShip2 = this.physics.add.sprite(1820, 130, 'ship2');
 
@@ -1048,7 +1035,7 @@
           if (this.personajeP4 == 9)
             this.myShip4.setTexture('jugadorMorado');
         }
-        */
+
 
 
 
@@ -1059,7 +1046,6 @@
 
 
         //sprites de puntuacion
-        /*
         this.ganadorText = this.add.text(1003 + 32, 311 + 96, "", { fontFamily: '"Arial Black"', fontSize: 25, fill: 'white', });
 
         this.ganadorText2 = this.add.text(1000 + 32, 316 + 96, "", { fontFamily: '"Arial Black"', fontSize: 25, fill: 'black', });
@@ -1075,9 +1061,8 @@
         this.killsInt2 = 0;
         this.killsInt3 = 0;
         this.killsInt4 = 0;
-        */
 
-        /*
+
         if (this.gamemode == 0) {
           this.bots = this.add.text(70, 285, "Bots: ", { fontFamily: '"Arial Black"' });
           this.bots.setFontSize(32);
@@ -1130,9 +1115,8 @@
           this.resbalar4 = 1;
 
         }
-        */
 
-        /*
+
         //JUGADOR 1 NO SALIRSE DE MAPA EN MUROS FUERTES 
         this.physics.add.collider(this.myShip, this.boxFuerte2, null, function (col1, col2) {
 
@@ -1184,10 +1168,10 @@
           this.myShip4.setVelocityX(0);
           this.myShip4.setVelocityY(0);
         }, this);
-        */
 
 
-        /*
+
+
         this.physics.add.overlap(this.myShip, this.pisomov, pisoMovPasar, function (col1, col2) {
 
         }, this);
@@ -1617,8 +1601,8 @@
         this.physics.add.overlap(this.myShip4, this.wallkill, bajarvidas4, function (col1, col2) {
 
         }, this);
-        */
-        /*
+
+
         function actualizarEnemigos() {
           this.matarbotsound.play();
           this.killsInt = this.enemigos.getLength();
@@ -1885,13 +1869,12 @@
              this.menupspritereiniciarP4.visible = false;*/
             //BORRAR SI HAY PROBLEMAS DE RENDIMIENTO!!!!!
 
-      /*
+
           }
 
         }
-      */  
 
-      /*
+
         this.physics.add.collider(this.enemigos, this.wallkill);
 
         this.physics.add.overlap(this.enemigos, this.wallkill, actualizarEnemigos, function (col1, col2) {
@@ -2454,7 +2437,6 @@
                   this.bombas2 = 1;
                       this.llama2 = 2;
           */
-         /*
             if (this.vidasInt2 <= 1) {
               this.vidasInt2 = this.vidasInt2 - 1;
               this.vidasJ2.setText(this.vidasInt2);
@@ -2474,8 +2456,7 @@
             }
           }
         }
-        */
-       /*
+
         function bajarvidas3() {
 
           if (this.cooldownP3 == 0) {
@@ -2488,7 +2469,7 @@
               this.bombas3 = 1;
                   this.llama3 = 2;
             */
-           /*
+
             if (this.vidasInt3 <= 1) {
               this.vidasInt3 = this.vidasInt3 - 1;
               this.vidasJ3.setText(this.vidasInt3);
@@ -2508,8 +2489,6 @@
             }
           }
         }
-        */
-       /*
         function bajarvidas4() {
 
           if (this.cooldownP4 == 0) {
@@ -2522,7 +2501,6 @@
             this.bombas4 = 1;
                 this.llama4 = 2;
           */
-         /*
             if (this.vidasInt4 <= 1) {
               this.vidasInt4 = this.vidasInt4 - 1;
               this.vidasJ4.setText(this.vidasInt4);
@@ -2555,7 +2533,6 @@
          this.bombas = 1;
              this.llama = 2;
        */
-      /*
             if (this.gamemode == 0) {
               //    this.relojInt = 300;
               //this.caerparedX =-1;
@@ -2593,8 +2570,7 @@
             }
           }
         }
-        */
-       /*
+
 
         this.physics.add.overlap(this.enemigos, this.myShip, bajarvidas, function (col1, col2) {
 
@@ -3224,12 +3200,10 @@
              this.menupspritereiniciarP4.visible = false;*/
             //BORRAR SI HAY PROBLEMAS DE RENDIMIENTO!!!!!
 
-/*
+
           }
 
         }
-        */
-       /*
         function aumentarllamas() {
           this.itemsound.play();
           this.scoreInt = this.scoreInt + 150;
@@ -3525,9 +3499,9 @@
           }
 
         }, this);
-        */
 
-       /*
+
+
         this.physics.add.overlap(this.myShip3, this.bombasFull3, cogerBomba, function (col1, col2) {
 
           if (this.guanteP3 == 2) {
@@ -3552,9 +3526,8 @@
           }
 
         }, this);
-      */
 
-      /*
+
         this.physics.add.overlap(this.myShip4, this.bombasFull4, cogerBomba, function (col1, col2) {
 
           if (this.guanteP4 == 2) {
@@ -3581,9 +3554,8 @@
         }, this);
 
         //leftjugador2
-        */
 
-       /*
+
         function actualizarEstado() {
           if (this.pause == 0 && (this.designer == 0 || this.designer == 2)) {
             if (this.vidasInt > 0) {
@@ -3711,18 +3683,18 @@
             }
           }
         }
-        */
 
 
-       /*
+
+
         // cursor.data.on('X', actualizarEstado, this);
         this.input.keyboard.on('keydown_X', actualizarEstado, this);
         this.input.keyboard.on('keydown_C', actualizarEstado2, this);
         this.input.keyboard.on('keydown_V', actualizarEstado3, this);
         this.input.keyboard.on('keydown_B', actualizarEstado4, this);
-        */
+
         //guante
-        /*
+
         function cogerBomba() {
 
         }
@@ -3769,7 +3741,6 @@
                 
                 link.click(); 
                 */
-               /*
                 localStorage.setItem("mapasCreados", this.mapaNumero + 1);
 
                 //this.mapacargar = localStorage.getItem("N1");
@@ -3882,9 +3853,9 @@
           }
         }
 
-        */
 
-        /*
+
+
         function moverMenuIzq() {
           if (this.pause == 1) {
 
@@ -3935,8 +3906,8 @@
             }
           }
         }
-      */
-      /*
+
+
         function realizarAccionesMenu() {
           if (this.pause == 1) {
             if (this.novotacionP1 == 0 && this.menureiniciar == 0)
@@ -3984,13 +3955,12 @@
 
             }
           }
-        
+
 
 
         }
-        */
 
-        /*
+
         function realizarAccionesMenu2() {
           if (this.pause == 1) {
 
@@ -4389,8 +4359,7 @@
           }
 
         }
-        */
-       /*
+
         //simular desconexion mando 2
         this.input.keyboard.on('keydown_E', activarPause, this);
         this.input.keyboard.on('keydown_E', activarEspera2, this);
@@ -4455,9 +4424,8 @@
 
         this.menupspritereiniciarP4 = this.physics.add.sprite(1920 / 2 + 200 - 50, 1080 / 2 - 50, 'votacionmenuP4');
         this.menupspritereiniciarP4.visible = false;
-        */
 
-       /*
+
         function crearmapa() {
 
 
@@ -4591,9 +4559,8 @@
 
           }
         }
-        */
 
-        /*
+
         this.designerX = 0;
         this.designerY = 0;
         this.element = 0;
@@ -4802,11 +4769,11 @@
         this.input.keyboard.on('keydown_X', seleccionarOpcionSet, this);
         this.input.keyboard.on('keydown_Z', seleccionarOpcionSet, this);
         this.input.keyboard.on('keydown_Q', seleccionarOpcionDes, this);
-        */
+
 
         //EXPERIMENTAL
 
-        /*
+
         function aumentarNivel() {
           //  console.log(this.nivelInt)
 
@@ -4851,14 +4818,14 @@
         var g = Phaser.Math.Between(0, 90);
         var b = Phaser.Math.Between(0, 90);
         this.cameras.main.backgroundColor.setTo(r, g, b);
-      */
+
 
 
       }
-      
+
       update() {
 
-        
+
         if (this.mapaNumero == -12) {
           this.vidasInt = 100;
           this.relojInt = 1000;
@@ -7932,7 +7899,7 @@
         this.load.image('seleccion3P', 'https://i.ibb.co/RvhgWwR/seleccioncuad.png');
         this.load.image('seleccion4P', 'https://i.ibb.co/DbqMNcN/seleccioncuad4.png');
 
-        this.load.image('seleccionpersonajes', 'https://i.ibb.co/fMtkcTZ/seleccio-npersonaje.png');
+        //this.load.image('seleccionpersonajes', 'https://i.ibb.co/fMtkcTZ/seleccio-npersonaje.png');
         this.load.image('seleccion2', 'https://i.ibb.co/WFCsJx3/seleccioncuad2.png');
         this.load.image('noready', 'https://i.ibb.co/1bcqr5j/sprite-No-Listo.png');
         this.load.image('ready', 'https://i.ibb.co/rMq8fcJ/sprite-Listo.png');
@@ -8970,12 +8937,11 @@
             }
           }
         }
-        
         function seleccionarOpcion() {
           this.popupsprite.visible = false;
           this.sound.play('select');
 
-          /*
+
           if (this.seleccionarDif == 1) {
             if (this.seleccionInt == 32) {
               this.dificultad = 0;
@@ -8998,10 +8964,10 @@
               return;
             }
           }
-          */
+
           if (this.pantalla == 1) {
 
-            /*
+
             if (this.seleccionInt == 30) {
               this.modoopciones = 1;
               this.menufondo.setTexture("fondo2");
@@ -9012,8 +8978,7 @@
               this.designerSprite.visible = false;
               this.mapanormalSprite.visible = true;
             }
-            */
-           /*
+
             if (this.seleccionInt == 31) {
               this.modoopciones = 2;
               this.menufondo.setTexture("fondo");
@@ -9025,7 +8990,7 @@
               this.designerSprite.visible = true;
               this.mapanormalSprite.visible = false;
             }
-*//*
+
             if (this.seleccionInt == 36) {
               if (this.mapaDesplegado - 3 > -7) {
                 this.mapaDesplegado = this.mapaDesplegado - 3;
@@ -9039,7 +9004,7 @@
 
 
             }
-*//*
+
             if (this.seleccionInt == 29) {
               this.mapaNormalNumero = 3;
               this.designer = 1;
@@ -9076,7 +9041,7 @@
 
               this.designerMode = 0;
             }
-*//*
+
             if (this.seleccionInt == 25) {
               if (this.mapaNumeroEditado + 1 <= localStorage.getItem("mapasCreados"))
                 this.mapaNumeroEditado = this.mapaNumeroEditado + 1;
@@ -9101,7 +9066,7 @@
             if (this.seleccionInt == 22) {
               this.tematica = 3;
             }
-*//*
+
             if (this.seleccionInt == 0) {
               this.seleccionarDif = 1;
               this.jugadores = 1;
@@ -9228,7 +9193,7 @@
 
               this.scene.start('Scene1', { tematica: this.tematica, personajeSelectP1: this.personajeSeleccionadoP1, personajeSelectP2: this.personajeSeleccionadoP2, personajeSelectP3: this.personajeSeleccionadoP3, personajeSelectP4: this.personajeSeleccionadoP4, gamemode: this.gamemode, jugadores: this.jugadores, designer: this.designer, nombredata: this.nombreJ1, nombredata2: this.nombreJ2, nombredata3: this.nombreJ3, nombredata4: this.nombreJ4, mapaNumero: this.mapaNumeroEditado, mapaTipo: this.mapaTipo, designerMode: this.designerMode, music: this.music, dificultad: this.dificultad });
             }
-*//*
+
             if (this.seleccionInt == 11) {
 
               this.personajeSeleccionadoP1 = 1;
@@ -9284,7 +9249,7 @@
 
 
             }
-    */      }
+          }
 
         }
 
@@ -9306,7 +9271,7 @@
         }
 
         this.add.image(120, 160, 'megaset', 'contra2');*/
-        /*
+
         function estadoListo1() {
           this.ready1 = 1;
           this.readySprite1.setTexture('ready');
@@ -9328,13 +9293,12 @@
         this.input.keyboard.on('keydown_Q', estadoListo2, this);
         this.input.keyboard.on('keydown_R', estadoListo3, this);
         this.input.keyboard.on('keydown_U', estadoListo4, this);
-        */
       }
 
 
       update() {
 
-        /*
+
         if (cursor.includes("NAME1")) {
           console.log(cursor);
           var nombre = cursor.split(".");
@@ -9353,8 +9317,7 @@
 
           localStorage.setItem("nombreJ2", this.nombreJ2);
         }
-        */
-        /*
+
         if (cursor.includes("NAME3")) {
           console.log(cursor);
           var nombre = cursor.split(".");
@@ -10438,8 +10401,7 @@
               else if (this.seleccionInt == 10) {
                 element.style.display = 'none'
 
-                //this.scene.start('Scene1', { tematica: this.tematica, personajeSelectP1: this.personajeSeleccionadoP1, personajeSelectP2: this.personajeSeleccionadoP2, personajeSelectP3: this.personajeSeleccionadoP3, personajeSelectP4: this.personajeSeleccionadoP4, gamemode: this.gamemode, jugadores: this.jugadores, designer: this.designer, nombredata: this.nombreJ1, nombredata2: this.nombreJ2, nombredata3: this.nombreJ3, nombredata4: this.nombreJ4, mapaNumero: this.mapaNumeroEditado, mapaTipo: this.mapaTipo, designerMode: this.designerMode, music: this.music, dificultad: this.dificultad }); 
-                MHB COMMENT TP1 27-9-2020 JUEGO
+                //this.scene.start('Scene1', { tematica: this.tematica, personajeSelectP1: this.personajeSeleccionadoP1, personajeSelectP2: this.personajeSeleccionadoP2, personajeSelectP3: this.personajeSeleccionadoP3, personajeSelectP4: this.personajeSeleccionadoP4, gamemode: this.gamemode, jugadores: this.jugadores, designer: this.designer, nombredata: this.nombreJ1, nombredata2: this.nombreJ2, nombredata3: this.nombreJ3, nombredata4: this.nombreJ4, mapaNumero: this.mapaNumeroEditado, mapaTipo: this.mapaTipo, designerMode: this.designerMode, music: this.music, dificultad: this.dificultad }); MHB COMMENT TP1 27-9-2020 JUEGO
               }
 
               if (this.seleccionInt == 11) {
@@ -11143,7 +11105,7 @@
           this.seleccionadoSprite.y = 406 + 550;
 
         }
-        */
+
 
         cursor = "XD";
 
@@ -11188,7 +11150,7 @@
     };
 
     var game = new Phaser.Game(config);
-  
+
   </script>
 
 

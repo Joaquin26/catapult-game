@@ -8,6 +8,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script type="text/javascript" src="../Logic/jquery-1.11.0.min.js"></script>
     <link rel="stylesheet" href="../CSS/style.css">
+    <script type="text/javascript" src="qrcode.js"></script>
+    <!--QR-->
     <script type="text/javascript">
         var webSocket = {};
         var obj;
@@ -25,19 +27,63 @@
 </head>
 
 
-<body style="background-image: url('../Assets/menu/FORNAME1PLAYER.jpg'); background-repeat: no-repeat;">
+<body style="background-image: url('../Assets/menu/FORNAME1PLAYER.jpg'); background-repeat: no-repeat;"> <!--wwun-->
+<!--<body>-->
+    
+    <div id="qrcode" style="position: relative; left: 43%; top: 10%;"></div>
+    
+    <input id="text" type="hidden" value=" " style="width:10%" /><br />
+
+    <script type="text/javascript">
+      var qrcode = new QRCode(document.getElementById("qrcode"), {
+        width: 200,
+        height: 200
+      });
+
+      function makeCode() {
+        var elText = document.getElementById("text");
+
+        if (!elText.value) {
+          alert("Input a text");
+          elText.focus();
+          return;
+        }
+
+        var currentLocation = window.location + '';;
+
+        console.log(currentLocation);
+        var res = currentLocation.split("=");
+
+        if (res[1] != null)
+          qrcode.makeCode(res[1]);
+
+      }
+
+      makeCode();
+
+      $("#text").
+        on("blur", function () {
+          makeCode();
+        }).
+        on("keydown", function (e) {
+          if (e.keyCode == 13) {
+            makeCode();
+          }
+        });
+    </script>
+
     <div style="position: relative;">
-        <div style="position: relative; height: 220px; left: 300px;">
+        <div style="position: relative; height: 100px; left: 300px;">
             <!--
             <img src="../Assets/menu/FORNAME1PLAYER.png">
             -->
         </div>
-        
-        <div style="text-align: center;"><input style="height: 25px; background-color: transparent; border: none; outline: none; border-bottom:1px solid #fff; color: #555; font-style: italic; font-size: 24px;" type="text" name="txtNombreJugador1" id="txtNombreJugador1" value="Jugador1" onfocus="this.value='';" size="18"></input></div>
-        <div style="height: 20px;"></div>
-        <div style="text-align: center;"><input style="height: 25px; background-color: transparent; border: none; outline: none; border-bottom:1px solid #fff; color: #555; font-style: italic; font-size: 24px;" type="text" name="txtNombreJugador2" id="txtNombreJugador2" value="Jugador2" onfocus="this.value='';" size="18"></input></div>
-        <div style="height: 20px;"></div>
-        <div style="text-align: center;"><input type="button" name="btnNombre" id="btnNombre" value="Go" class="boton_1"></input></div>
+
+        <div style="text-align: center;"><img src="../Assets/menu/REDCYRCLEBUTTON.png" height="3%" width="3%"></img><input style="height: 25px; background-color: transparent; border: none; outline: none; border-bottom:1px solid #fff; color: #555; font-style: italic; font-size: 24px;" type="text" name="txtNombreJugador1" id="txtNombreJugador1" value="Jugador1" onfocus="this.value='';" size="18"></input></div>
+        <div style="height: 40px;"></div>
+        <div style="text-align: center;"><img src="../Assets/menu/REDCYRCLEBUTTON.png" height="3%" width="3%"></img><input style="height: 25px; background-color: transparent; border: none; outline: none; border-bottom:1px solid #fff; color: #555; font-style: italic; font-size: 24px;" type="text" name="txtNombreJugador2" id="txtNombreJugador2" value="Jugador2" onfocus="this.value='';" size="18"></input></div>
+        <div style="height: 50px;"></div>
+        <div style="text-align: center;"><input type="button" name="btnNombre" id="btnNombre" value="Go" class="boton_1" onclick="goToGameAndSendNames()"></input></div>
     </div>
 
         <!--
@@ -49,9 +95,20 @@
             <div class="divButtonSalir"> <input class="buttonSalir" id="boton" type="button" onclick="goBackHome();"> </div>
         -->
 
-        <script>
-            
-        </script>
-    </div>
+    <script>
+      function goToGameAndSendNames(){
+          var nombreDeJugador1 = document.getElementById("txtNombreJugador1").value;
+          var nombreDeJugador2 = document.getElementById("txtNombreJugador2").value;
+          //alert(nombreDeJugador);
+          establishConnectionGame(nombreDeJugador1, nombreDeJugador2);
+      } 
+    </script>
+    <script>
+      this.cursors = this.input.keyboard.createCursorKeys();
+      if(cursor.includes("nombreDelJugador1:")){
+          document.getElementById("txtNombreJugador1").innerHTML = "JJJJJJJJJ";
+          alert("Estás por buen camnino");
+      }
+    </script>
 </body>
 </html>

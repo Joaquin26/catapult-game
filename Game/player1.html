@@ -35,7 +35,7 @@
         
         <div style="text-align: center;"><input style="height: 25px; background-color: transparent; border: none; outline: none; border-bottom:1px solid #fff; color: #555; font-style: italic; font-size: 24px;" type="text" name="txtNombre" id="txtNombre" value="Jugador1" onfocus="this.value='';" size="18"></input></div>
         <div style="height: 20px;"></div>
-        <div style="text-align: center;"><input type="button" name="btnNombre" id="btnNombre" value="Go" class="boton_1"></input></div>
+        <div style="text-align: center;"><input type="button" name="btnNombre" id="btnNombre" onclick="goToGameAndSendName()" value="Go" class="boton_1"></input></div>
     </div>
 
         <!--
@@ -51,5 +51,14 @@
             
         </script>
     </div>
+    <script>
+        function goToGameAndSendName(){
+            var nombreDeJugador = document.getElementById("txtNombre").value;
+            //alert(nombreDeJugador);
+            //establishConnectionGame();
+            establishConnectionGame(nombreDeJugador, "Machine");
+        }
+        //establishConnectionGame
+    </script>
 </body>
 </html>

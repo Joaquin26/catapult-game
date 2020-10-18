@@ -23,16 +23,16 @@
         <script src="../Logic/connect.js"></script>
     </head>
 
-    <body>
+    <body onload="loadUsersData()">
 
         <div class="space-block"></div>
 
         <table width="100%">
             <tr>
                 <td rowspan="2" width="15%" style="text-align:center;"><img src="img/user.png" width="50%"></td>
-                <td width="30%">User 1</td>
+                <td width="30%"><div id="lblUser1Id">User1</div></td>
                 <td rowspan="2" width="15%" style="text-align:center;"><img src="img/user.png" width="50%"></td>
-                <td width="35%">User 2</td>
+                <td width="35%"><div id="lblUser2Id">User2</div></td>
             </tr>
             <tr>
                 <td>
@@ -96,5 +96,23 @@
         <div class="space-block"></div>
 
         <img src="img/mesa.jpg" width="100%">
+
+        <script>
+            function loadUsersData(){
+                var urlParams = new URLSearchParams(window.location.search);
+                //var player1Name = urlParams.get('player1Name');
+                //alert("player1Name: "+player1Name);
+                document.getElementById("lblUser1Id").innerHTML = urlParams.get('player1Name');
+                document.getElementById("lblUser2Id").innerHTML = urlParams.get('player2Name');
+            }
+        </script>
+
+        <script>
+            this.cursors = this.input.keyboard.createCursorKeys();
+            if(cursor.includes("nombreDelJugador1:")){
+                alert("Estás por buen camnino");
+            }
+        </script>
+
     </body>
 </html>

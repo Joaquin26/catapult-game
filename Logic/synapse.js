@@ -111,7 +111,8 @@
                                 typeof addServersInProgress === "function")
                             {
                             socket.send("GETSERVERNAME")
-
+                            //wwun
+                            //alert("synapse.js: GETSERVERNAME");
                             addServersInProgress(socket.url);
                             }
                             --numInParallel;
@@ -122,7 +123,7 @@
                        socket.onmessage = function (evt) { 
                           var received_msg = evt.data;
                           addServersInProgress(socket.url, received_msg);
-                          //alert("Se obtuvo nombre del servidor");
+                          //alert("synapse.js: received_msg "+received_msg); //wwun
                        };
                     socket.onerror = function (err) {
                         if (socket) {

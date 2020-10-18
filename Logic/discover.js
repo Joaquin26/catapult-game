@@ -5,11 +5,13 @@ function entablishConnection(e) {
 }
 
 function availableServersToDiv(e, name) {
+    //alert("discover.js availableServersToDiv name: "+name); //test wwun
     if (e && e.includes(":") && e.includes(".") && name.includes("+")) {
         var nombre = name.split('+')[1];
+        //var nombre = 'Test';
         listAvailableServers.push(e);
         var t = e.split(":")[1].split("."),
-            n = '<button class="btn-server" type="button" id="' + (e + 2) + '" class="buttonPr" onclick="entablishConnection(\'' + e + "');\" >" + ("Sala " + nombre) + "</button><br>";
+            n = '<button class="btn-server" type="button" id="' + (e + 2) + '" class="buttonPr" onclick="entablishConnection(\'' + e + "');\" >" + ("Sala" + nombre) + "</button><br>";
         document.getElementById("availableServers").innerHTML += n
     }
 }
