@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Game</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <script type="text/javascript" src="../Logic/jquery-1.11.0.min.js"></script>
+        <link rel="stylesheet" href="../CSS/style.css">
+        <script type="text/javascript" src="qrcode.js"></script>
+        <!--QR-->
+        <script src="Phaser/phaser.min.js" charset="utf-8"></script>
+        <script src="../Logic/connect.js"></script>
+    </head>
+    <body type="text/javascript">
+        <script>
+            //inicio capturando movimiento
+            document.onkeydown = function(e){
+                if(e.keyCode == 37){
+                    moveAntiClockWise(1);
+                }
+                if(e.keyCode == 39){
+                    moveClockWise(1);
+                }
+                if(e.keyCode == 32){
+                    //alert('hitWhiteBall');
+                    hitWhiteBall();
+                }
+            }
+            //fin capturando movimiento
+
+            //captar cursor
+            var webSocket = {};
+            var element;
+            var obj;
+            var cursor = "";
+            var audio = new Audio("../Assets/music/intro_sfx.mp3");
+            audio.addEventListener(
+                'ended', 
+                function () {
+                    this.currentTime = 0;
+                    this.play();
+                },
+                false);
+            
+            audio.play();
+            //fin captar cursor
+
+            var config = {
+                type: Phaser.AUTO,
+                width: 1920,
+                height: 1080,
+                parent: 'phaser-example',
+                scene: {
+                    preload: preload,
+                    create: create,
+                    update: update
+                }
+            };
+            var arrow;
+            var game = new Phaser.Game(config);
+
+            //temp
+            var contadorDeLlamadas = 0;
+
+            function preload ()
+            {
+                //this.load.image('arrow', '../Assets/sprites/longarrow-white.png');
+                this.load.image('arrow', 'https://i.ibb.co/pW7Vr0b/taco-Madera-Dibujo-Punta-Delgada300x10.png');//wwun
+            }
+
+            function create ()
+            {
+                //  The code isn't too important for this example
+                //  What we're showing here is the angles, in degrees and radians,
+                //  that a Phaser sprite uses when rotating.
+                //  
+                //  You can rotate a sprite by setting either property.
+                //  
+                //  `angle` is in degrees, from -180 to 180.
+                //  `rotation` is in radians, from -PI to PI
+                //  
+                //  For example:
+                //  
+                //  sprite.angle = 45
+                //  
+                //  is the same as:
+                //  
+                //  sprite.rotation = 0.785
+
+                var labelStyle = { font: "16px courier", fill: "#00ff00", align: "center" };
+
+                //  Create a large circle, then draw the angles on it
+
+                var circle = new Phaser.Geom.Circle(400, 300, 225); // crea circunferencia y ubicación
+                var labelCircle = new Phaser.Geom.Circle(400, 300, 265); // crea circunferencia de números y ubicación
+
+                var graphics = this.add.graphics();
+
+                var distance = 0;//wwun
+
+                graphics.lineStyle(2, 0x00bb00, 1); //grosor de la circunferencia
+
+                graphics.strokeCircleShape(circle); //dibuja la circunferencia
+                
+                graphics.beginPath();
+
+                for (var a = 0; a < 360; a += 22.5)
+                {
+                    graphics.moveTo(400, 300); //punto de referencia de la gráfica de los radios
+
+                    var p = Phaser.Geom.Circle.CircumferencePoint(circle, Phaser.Math.DegToRad(a));
+
+                    graphics.lineTo(p.x, p.y); //crea las líneas de radio
+
+                    var lp = Phaser.Geom.Circle.CircumferencePoint(labelCircle, Phaser.Math.DegToRad(a));
+
+                    var na = a;
+
+                    if (a > 180)
+                    {
+                        na -= 360;
+                    }
+
+                    var rads = String(Phaser.Math.DegToRad(na)).substr(0, 5);
+                    var info = na + "°\n" + rads;
+                    var label = this.add.text(lp.x, lp.y, info, labelStyle).setOrigin(0.5);  //escribe los números
+                }
+                
+                graphics.strokePath(); //líneas de radio
+
+                arrow = this.add.sprite(400, 300, 'arrow').setOrigin(0, 0.5);
+
+                text = this.add.text(10, 10, '', { font: '16px Courier', fill: '#ffffff' });
+            }
+
+            function cueMovement(angleAmount){
+                arrow.angle += (0.8*Math.round(angleAmount));
+            }
+
+            function moveClockWise(angleAmount){ //wwun
+                arrow.angle -= (0.8*Math.round(angleAmount)); //gira el ángulo horario
+            }
+
+            function moveAntiClockWise(angleAmount){ //wwun
+                arrow.angle += (0.8*Math.round(angleAmount)); //gira el ángulo antihorario
+            }
+
+            function hitWhiteBall(){//wwun
+                //distance = Phaser.Math.Distance.Between(400, 300,20,20);
+                //arrow = this.add.sprite(800, 600, 'arrow').setOrigin(80, 100);
+                //arrow.anchor.setTo(10);
+                var bullet = arrow.getFirstDead();
+
+                bullet.reset(sprite.x - 8, sprite.y - 8);
+
+                game.physics.arcade.moveToPointer(bullet, 300);
+            }
+
+            function update ()
+            {
+                //arrow.angle += 0.2; //gira el ángulo
+
+                //escribe texto blanco sobre rotación
+                text.setText([
+                    'Sprite Rotation',
+                    'Angle: ' + arrow.angle.toFixed(2),
+                    'Rotation: ' + arrow.rotation.toFixed(2)
+                ]);
+
+                //estos dos if se podrían convertir en uno
+                if(cursor.includes("GyroscopeXLEFT")){
+                    var movimientoCapturado = cursor.split(":");
+                    //moveAntiClockWise(movimientoCapturado[1]);
+
+                    //temp
+                    contadorDeLlamadas++;
+                    console.log("Llamada: "+contadorDeLlamadas);
+
+                    var contadorDeLlamadasLocal = 0;
+                    //contadorDeLlamadasLocal++;
+                    //console.log("Llamada local: "+contadorDeLlamadasLocal);
+                    //fin temp
+                    
+                    cueMovement(movimientoCapturado[1]);
+                }
+
+                if(cursor.includes("GyroscopeXRIGHT")){
+                    var movimientoCapturado = cursor.split(":");
+                    //moveClockWise(Math.abs(movimientoCapturado[1]));
+                    cueMovement(movimientoCapturado[1]);
+                }
+
+            }
+        </script>
+    </body>
+</html>
+

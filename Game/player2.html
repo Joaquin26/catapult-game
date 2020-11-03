@@ -10,20 +10,8 @@
     <link rel="stylesheet" href="../CSS/style.css">
     <script type="text/javascript" src="qrcode.js"></script>
     <!--QR-->
-    <script type="text/javascript">
-        var webSocket = {};
-        var obj;
-        var cursor = "";
-        var audio = new Audio("../Assets/music/intro_sfx.mp3");
-        audio.addEventListener('ended', function () {
-            this.currentTime = 0;
-            this.play();
-        }, false);
-        audio.play();
-    </script>
-    <script src="../Phaser/phaser.min.js" charset="utf-8"></script>
+    <script src="Phaser/phaser.min.js" charset="utf-8"></script>
     <script src="../Logic/connect.js"></script>
-
 </head>
 
 
@@ -73,42 +61,127 @@
     </script>
 
     <div style="position: relative;">
-        <div style="position: relative; height: 100px; left: 300px;">
-            <!--
-            <img src="../Assets/menu/FORNAME1PLAYER.png">
-            -->
-        </div>
+      <div style="position: relative; height: 100px; left: 300px;">
+          <!--
+          <img src="../Assets/menu/FORNAME1PLAYER.png">
+          -->
+      </div>
 
-        <div style="text-align: center;"><img src="../Assets/menu/REDCYRCLEBUTTON.png" height="3%" width="3%"></img><input style="height: 25px; background-color: transparent; border: none; outline: none; border-bottom:1px solid #fff; color: #555; font-style: italic; font-size: 24px;" type="text" name="txtNombreJugador1" id="txtNombreJugador1" value="Jugador1" onfocus="this.value='';" size="18"></input></div>
-        <div style="height: 40px;"></div>
-        <div style="text-align: center;"><img src="../Assets/menu/REDCYRCLEBUTTON.png" height="3%" width="3%"></img><input style="height: 25px; background-color: transparent; border: none; outline: none; border-bottom:1px solid #fff; color: #555; font-style: italic; font-size: 24px;" type="text" name="txtNombreJugador2" id="txtNombreJugador2" value="Jugador2" onfocus="this.value='';" size="18"></input></div>
-        <div style="height: 50px;"></div>
-        <div style="text-align: center;"><input type="button" name="btnNombre" id="btnNombre" value="Go" class="boton_1" onclick="goToGameAndSendNames()"></input></div>
+      <div style="text-align: center;">
+        <img src="../Assets/menu/REDCYRCLEBUTTON.png" height="3%" width="3%" id="btnReady1"></img>
+        <input style="height: 25px; background-color: transparent; border: none; outline: none; border-bottom:1px solid #fff; color: #555; font-style: italic; font-size: 24px;" type="text" name="txtNombreJugador1" id="txtNombreJugador1" value="Jugador1" onfocus="this.value='';" size="18"></input>
+      </div>
+      
+      <div style="height: 40px;"></div>
+      
+      <div style="text-align: center;">
+        <img src="../Assets/menu/REDCYRCLEBUTTON.png" height="3%" width="3%"></img>
+        <input style="height: 25px; background-color: transparent; border: none; outline: none; border-bottom:1px solid #fff; color: #555; font-style: italic; font-size: 24px;" type="text" name="txtNombreJugador2" id="txtNombreJugador2" value="Jugador2" onfocus="this.value='';" size="18"></input>
+      </div>
+      
+      <div style="height: 50px;"></div>
+      <div style="text-align: center;"><input type="button" name="btnNombre" id="btnNombre" value="Go" class="boton_1" onclick="goToGameAndSendNames()"></input></div>
     </div>
 
-        <!--
-            <div><img src="img/ball1.png" alt="ball"></div>
-            <div class="divButtonStart"> <input class="buttonStart" id="boton" type="button"
-                    onclick="establishConnectionGame();"> </div>
-            <div class="divButtonOpciones"> <input class="buttonOpciones" id="boton" type="button"
-                    onclick="goInstructions();"> </div>
-            <div class="divButtonSalir"> <input class="buttonSalir" id="boton" type="button" onclick="goBackHome();"> </div>
-        -->
+    <script type="text/javascript">
 
-    <script>
+      //recibe el nombre
+      //cambia el botón
+      function setNameAndButton(nombreDeJugador){
+        //document.getElementById("txtNombre").innerHTML = "innerHTML: ";//+nombreDeJugador;
+        document.getElementById("txtNombreJugador1").value = nombreDeJugador;
+        setTimeout(changeButton, 1000);
+        //alert(nombreDeJugador);
+      }
+
+      function changeButton(){
+        document.getElementById("btnReady1").src = "../Assets/menu/GREENCYRCLEBUTTON.png";
+        //setTimeout(goToGameAndSendName, 1000);
+      }
+
+      function goToGameAndSendName(){
+        //System.out.print("2 cursor to String: "+ cursor.toString() );
+        var nombreDeJugador = document.getElementById("txtNombre").value;
+        //alert(nombreDeJugador);
+        //establishConnectionGame();
+        establishConnectionGame(nombreDeJugador, "Machine");
+      }
+
       function goToGameAndSendNames(){
           var nombreDeJugador1 = document.getElementById("txtNombreJugador1").value;
           var nombreDeJugador2 = document.getElementById("txtNombreJugador2").value;
-          //alert(nombreDeJugador);
           establishConnectionGame(nombreDeJugador1, nombreDeJugador2);
-      } 
-    </script>
-    <script>
-      this.cursors = this.input.keyboard.createCursorKeys();
-      if(cursor.includes("nombreDelJugador1:")){
-          document.getElementById("txtNombreJugador1").innerHTML = "JJJJJJJJJ";
-          alert("Estás por buen camnino");
       }
+
+      var webSocket = {};
+      var element;
+      var obj;
+      var cursor = "";
+      var audio = new Audio("../Assets/music/intro_sfx.mp3");
+      audio.addEventListener('ended', function () {
+        this.currentTime = 0;
+        this.play();
+      }, false);
+      audio.play();
+
+      class ScenePlayer2 extends Phaser.Scene {
+        constructor() {
+          super('ScenePlayer2');
+
+          this.accumulator = 0;
+          this.fps = 30;  // Physics checks 60 times/s
+          this.physicsTimestep = 1000 / this.fps;
+        }
+        create() {
+          this.nombreJ4text = this.add.text(1114, 626, this.nombreJ4, { fontFamily: '"Arial Black"', fontSize: 24, fill: 'black', });
+        }
+        update() {
+        console.log("aqui inicio " + cursor + " aqui termina");
+            if(cursor.includes("nombreDelJugador1")){
+                var nombreTmp = cursor.split(":");
+                setNameAndButton(nombreTmp[1]);
+            }
+        }
+          
+          
+      }
+
+      var SCREEN_WIDTH = 1920;
+      var SCREEN_HEIGHT = 1080;
+      var config = {
+        type: Phaser.arcade,
+
+        audio: {
+          disableWebAudio: true
+        },
+
+        width: 1920,
+        height: 1080,
+        transparent: true,
+        //backgroundColor: '#222288',
+        dom: {
+          createContainer: true
+        },
+        pixelArt: true,
+        fps: {
+          min: 10,
+          target: 60,
+          forceSetTimeOut: false,
+          deltaHistory: 30
+        },
+        scene: [ScenePlayer2],
+        physics: {
+          default: 'arcade',
+          arcade: {
+            debug: false
+          }
+        },
+
+      };
+
+      var game = new Phaser.Game(config);
+
     </script>
+
 </body>
 </html>

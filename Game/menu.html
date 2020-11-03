@@ -8,20 +8,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script type="text/javascript" src="../Logic/jquery-1.11.0.min.js"></script>
     <link rel="stylesheet" href="../CSS/style.css">
-    <script type="text/javascript">
-        var webSocket = {};
-        var obj;
-        var cursor = "";
-        var audio = new Audio("../Assets/music/intro_sfx.mp3");
-        audio.addEventListener('ended', function () {
-            this.currentTime = 0;
-            this.play();
-        }, false);
-        audio.play();
-    </script>
-    <script src="../Phaser/phaser.min.js" charset="utf-8"></script>
+    <script src="Phaser/phaser.min.js" charset="utf-8"></script>
     <script src="../Logic/connect.js"></script>
-
+    
 </head>
 
 <body>
@@ -44,7 +33,7 @@
         -->
 
         <script>
-            
+            /*
             var selectorStyle = document.querySelector(".divSelector");
             selectorStyle.style.top = 80 + 'px';
             console.log("posición actual: "+ parseInt(selectorStyle.style.top));
@@ -74,7 +63,154 @@
                 }
                 console.log("pos x: "+selectorStyle.style.top);
             }
+            */
         </script>
+
+        <script type="text/javascript">
+
+        var selectorStyle = document.querySelector(".divSelector");
+            selectorStyle.style.top = 80 + 'px';
+            console.log("posición actual: "+ parseInt(selectorStyle.style.top));
+
+            //
+
+            document.onkeydown = function(e){
+                if(e.keyCode == 13 || e.keyCode == 32){  // barra espaciadora y enter
+                    if(parseInt(selectorStyle.style.top) == 80){    //cuando se ubica en una posición
+                        console.log("80!");
+                        goPlayer1();
+                    }
+                    if(parseInt(selectorStyle.style.top) == 230){
+                        goPlayer2();
+                    }
+                    if(parseInt(selectorStyle.style.top) == 380){
+                        onclick="goInstruccions()";
+                    }
+                }
+                if(e.keyCode == 38){        // mover abajo
+                    if(parseInt(selectorStyle.style.top) > 80 && parseInt(selectorStyle.style.top) < 400){
+                        selectorStyle.style.top = (parseInt(selectorStyle.style.top) - 150) + 'px';
+                    }
+                }
+                if(e.keyCode == 40){        // mover arriba
+                    if(parseInt(selectorStyle.style.top) < 370){
+                        selectorStyle.style.top = (parseInt(selectorStyle.style.top) + 150) + 'px';
+                    }
+                }
+                console.log("pos x: "+selectorStyle.style.top);
+            }
+
+            //
+
+        var webSocket = {};
+        var element;
+        var obj;
+        var cursor = "";
+        var audio = new Audio("../Assets/music/intro_sfx.mp3");
+        audio.addEventListener('ended', function () {
+            this.currentTime = 0;
+            this.play();
+        }, false);
+        audio.play();
+
+        var bloqueoUp = false;
+        var bloqueoDown = false;
+
+        class SceneMenu extends Phaser.Scene {
+            constructor() {
+                super('SceneMenu');
+
+                this.accumulator = 0;
+                this.fps = 30;  // Physics checks 60 times/s
+                this.physicsTimestep = 1000 / this.fps;
+
+            }
+            create() {
+                this.nombreJ4text = this.add.text(1114, 626, this.nombreJ4, { fontFamily: '"Arial Black"', fontSize: 24, fill: 'black', });
+            }
+            
+            update() {
+                console.log("aqui inicio " + cursor + " aqui termina");
+                // movimientos de cursor
+                if(cursor == "UP" && bloqueoUp == false){        // mover abajo
+                    if(parseInt(selectorStyle.style.top) > 80 && parseInt(selectorStyle.style.top) < 400){
+                        selectorStyle.style.top = (parseInt(selectorStyle.style.top) - 150) + 'px';
+                        bloqueoUp = true;
+                    }
+                }
+                if(cursor == "STOPUP"){        // mover abajo
+                    bloqueoUp = false;
+                }
+                if(cursor == "DOWN" && bloqueoDown == false){        // mover arriba
+                    if(parseInt(selectorStyle.style.top) < 370){
+                        selectorStyle.style.top = (parseInt(selectorStyle.style.top) + 150) + 'px';
+                        bloqueoDown = true;
+                    }
+                }
+                if(cursor == "STOPDOWN"){        // mover abajo
+                    bloqueoDown = false;
+                }
+
+                // fin de movimientos de cursor
+
+                //selección de opciones
+
+                if(cursor == "A" || cursor == "B"){  // barra espaciadora y enter
+                    if(parseInt(selectorStyle.style.top) == 80){    //cuando se ubica en una posición
+                        console.log("80!");
+                        goPlayer1();
+                    }
+                    if(parseInt(selectorStyle.style.top) == 230){
+                        goPlayer2();
+                    }
+                    if(parseInt(selectorStyle.style.top) == 380){
+                        onclick="goInstruccions()";
+                    }
+                }
+
+                //fin de selección de opciones
+            }
+            
+            
+        }
+
+
+    var SCREEN_WIDTH = 1920;
+    var SCREEN_HEIGHT = 1080;
+    var config = {
+      type: Phaser.arcade,
+
+      audio: {
+        disableWebAudio: true
+      },
+
+      width: 1920,
+      height: 1080,
+      backgroundColor: '#222288',
+      dom: {
+        createContainer: true
+      },
+      pixelArt: true,
+      fps: {
+        min: 10,
+        target: 60,
+        forceSetTimeOut: false,
+        deltaHistory: 30
+      },
+      scene: [SceneMenu],
+      physics: {
+        default: 'arcade',
+        arcade: {
+          debug: false
+        }
+      },
+
+    };
+
+    var game = new Phaser.Game(config);
+
+    </script>
+
     </div>
 </body>
 </html>

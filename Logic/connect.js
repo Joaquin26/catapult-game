@@ -27,8 +27,8 @@ function goPlayer2(){
 }
 function establishConnectionGame(nombreDeJugador1, nombreDeJugador2){
 //function establishConnectionGame(){
-    $(location).attr("href","../Game/gameTest.html?player1Name="+nombreDeJugador1+"&player2Name="+nombreDeJugador2+"&url="+url)
-    //$(location).attr("href","../Game/game.html?url="+url)
+    //$(location).attr("href","../Game/gameTest.html?player1Name="+nombreDeJugador1+"&player2Name="+nombreDeJugador2+"&url="+url)
+    $(location).attr("href","../Game/pocSensors.html?url="+url)
 }
 function goInstructions(){
     $(location).attr("href","../Game/instructions.html")

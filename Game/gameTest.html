@@ -108,10 +108,18 @@
         </script>
 
         <script>
-            this.cursors = this.input.keyboard.createCursorKeys();
-            if(cursor.includes("nombreDelJugador1:")){
+            //alert("Juego!");
+            console.log("cursor: "+cursor);
+            //this.cursors = this.input.keyboard.createCursorKeys();
+            if(cursor.includes("nombreDelJugador1:") || cursor.includes("Jugador1")){
                 alert("Estás por buen camnino");
             }
+
+            /*
+            if(cursor == ""){
+                alert("cursor vacío");
+            }
+            */
         </script>
 
     </body>
