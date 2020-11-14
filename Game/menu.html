@@ -16,55 +16,23 @@
 <body>
 
     <div style="position: relative;">
-        <div class="divMenuPrincipal"> <img src="../Assets/menu/MENU.png" height="100%" width="100%"></img> </div>
-        
-        <div class="divSelector"> <img src="../Assets/menu/SELECTOR.png" height="70%" width="70%" id="imgSelector"></img> </div>
-
-        <div class="divJugar1"> <img src="../Assets/menu/JUGAR1.png" height="70%" width="70%"></img> </div>
-        <div class="divJugar2"> <img src="../Assets/menu/JUGAR2.png" height="70%" width="70%"></img> </div>
-        <div class="divReglas"> <img src="../Assets/menu/REGLAS.png" height="70%" width="70%"></img> </div>
-
         <!--
-            <div class="divButtonStart"> <input class="buttonStart" id="boton" type="button"
-                    onclick="establishConnectionGame();"> </div>
-            <div class="divButtonOpciones"> <input class="buttonOpciones" id="boton" type="button"
-                    onclick="goInstructions();"> </div>
-            <div class="divButtonSalir"> <input class="buttonSalir" id="boton" type="button" onclick="goBackHome();"> </div>
+        <div class="divMenuPrincipal"> <img src="../Assets/menu/MENU.png" height="100%" width="100%"></img> </div>
         -->
 
-        <script>
-            /*
-            var selectorStyle = document.querySelector(".divSelector");
-            selectorStyle.style.top = 80 + 'px';
-            console.log("posición actual: "+ parseInt(selectorStyle.style.top));
+        <div class="divSelector">
+            <img src="../Assets/menu/SELECTOR.png" height="70%" width="70%" id="imgSelector"></img>
+        </div>
 
-            document.onkeydown = function(e){
-                if(e.keyCode == 13 || e.keyCode == 32){
-                    if(parseInt(selectorStyle.style.top) == 80){
-                        console.log("80!");
-                        goPlayer1();
-                    }
-                    if(parseInt(selectorStyle.style.top) == 230){
-                        goPlayer2();
-                    }
-                    if(parseInt(selectorStyle.style.top) == 380){
-                        onclick="goInstruccions()";
-                    }
-                }
-                if(e.keyCode == 38){
-                    if(parseInt(selectorStyle.style.top) > 80 && parseInt(selectorStyle.style.top) < 400){
-                        selectorStyle.style.top = (parseInt(selectorStyle.style.top) - 150) + 'px';
-                    }
-                }
-                if(e.keyCode == 40){
-                    if(parseInt(selectorStyle.style.top) < 370){
-                        selectorStyle.style.top = (parseInt(selectorStyle.style.top) + 150) + 'px';
-                    }
-                }
-                console.log("pos x: "+selectorStyle.style.top);
-            }
-            */
-        </script>
+        <div class="divJugar1">
+            <img src="../Assets/menu/JUGAR1.png" height="70%" width="70%"></img>
+        </div>
+        <div class="divJugar2">
+            <img src="../Assets/menu/JUGAR2.png" height="70%" width="70%"></img>
+        </div>
+        <div class="divReglas">
+            <img src="../Assets/menu/REGLAS.png" height="70%" width="70%"></img>
+        </div>
 
         <script type="text/javascript">
 
@@ -111,7 +79,7 @@
             this.currentTime = 0;
             this.play();
         }, false);
-        audio.play();
+        //audio.play();
 
         var bloqueoUp = false;
         var bloqueoDown = false;
@@ -125,9 +93,62 @@
                 this.physicsTimestep = 1000 / this.fps;
 
             }
+            preload ()
+            {
+                this.load.image('cue', 'https://i.ibb.co/TqQtDMG/cue-Button.png');
+                this.load.image('arrow', 'https://i.ibb.co/pW7Vr0b/taco-Madera-Dibujo-Punta-Delgada300x10.png');//wwun
+            }
             create() {
                 this.nombreJ4text = this.add.text(1114, 626, this.nombreJ4, { fontFamily: '"Arial Black"', fontSize: 24, fill: 'black', });
+
+                //temp para pruebas de concepto
+                this.buttonCue = this.add.text(100, 200, '');
+                this.clickButtonCue = this.add.text(100, 100, 'Prueba de Concepto del Taco!', {fontSize: '40px'})
+                .setInteractive({ useHandCursor: true })
+                .on('pointerover', () => this.enterButtonHoverStateCue() )
+                .on('pointerout', () => this.enterButtonRestStateCue() )
+                .on('pointerdown', () => this.enterButtonActiveStateCue() )
+                .on('pointerup', () => {
+                    tmpEstablishConnectionGameCue();
+                });
+
+                this.buttonMovingWhiteBall = this.add.text(1, 1, '');
+                this.clickButtonMovingWhiteBall = this.add.text(100, 150, 'Prueba de Concepto de Movimiento de Bola!', {fontSize: '40px'})
+                .setInteractive({ useHandCursor: true })
+                .on('pointerover', () => this.enterButtonHoverStateMovingWhiteBall() )
+                .on('pointerout', () => this.enterButtonRestStateMovingWhiteBall() )
+                .on('pointerdown', () => this.enterButtonActiveStateMovingWhiteBall() )
+                .on('pointerup', () => {
+                    tmpEstablishConnectionGameWhiteBall();
+                });
+                //fin de temp para pruebas de concepto
             }
+
+            //temp para pruebas de concepto
+            enterButtonHoverStateCue() {
+                this.clickButtonCue.setStyle({ fill: '#ff0'});
+            }
+
+            enterButtonRestStateCue() {
+                this.clickButtonCue.setStyle({ fill: '#FFF' });
+            }
+
+            enterButtonActiveStateCue() {
+                this.clickButtonCue.setStyle({ fill: '#0ff' });
+            }
+
+            enterButtonHoverStateMovingWhiteBall() {
+                this.clickButtonMovingWhiteBall.setStyle({ fill: '#ff0'});
+            }
+
+            enterButtonRestStateMovingWhiteBall() {
+                this.clickButtonMovingWhiteBall.setStyle({ fill: '#FFF' });
+            }
+
+            enterButtonActiveStateMovingWhiteBall() {
+                this.clickButtonMovingWhiteBall.setStyle({ fill: '#0ff' });
+            }
+            //fin de temp para pruebas de concepto
             
             update() {
                 console.log("aqui inicio " + cursor + " aqui termina");
@@ -150,11 +171,9 @@
                 if(cursor == "STOPDOWN"){        // mover abajo
                     bloqueoDown = false;
                 }
-
                 // fin de movimientos de cursor
 
                 //selección de opciones
-
                 if(cursor == "A" || cursor == "B"){  // barra espaciadora y enter
                     if(parseInt(selectorStyle.style.top) == 80){    //cuando se ubica en una posición
                         console.log("80!");
@@ -167,7 +186,6 @@
                         onclick="goInstruccions()";
                     }
                 }
-
                 //fin de selección de opciones
             }
             
@@ -186,7 +204,8 @@
 
       width: 1920,
       height: 1080,
-      backgroundColor: '#222288',
+      transparent: true,
+      parent: 'phaser-example',
       dom: {
         createContainer: true
       },

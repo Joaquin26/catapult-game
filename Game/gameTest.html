@@ -9,6 +9,7 @@
         <script src="Phaser/phaser.min.js"></script>
         <link rel="stylesheet" href="../CSS/style.css" />
         <script type="text/javascript" src="qrcode.js"></script>
+        <script src="../Logic/connect.js"></script>
         <!--QR-->
         <link rel="stylesheet" type="text/css" href="style.css">
 
@@ -17,13 +18,531 @@
             var obj;
             var element;
             var cursor = "";
-        </script>
-        <!--<script src="../Phaser/phaser.min.js" charset="utf-8"></script>-->
+            var audio = new Audio("../Assets/music/intro_sfx.mp3");
+            audio.addEventListener(
+                'ended', 
+                function () {
+                    this.currentTime = 0;
+                    this.play();
+                },
+                false);
+            //audio.play();
 
-        <script src="../Logic/connect.js"></script>
+            var config = {
+                type: Phaser.AUTO,
+                width: 1920,
+                height: 1080,
+                parent: "container",
+                type: Phaser.AUTO,
+                //transparent: true,
+                //backgroundColor: '#006400',
+                //parent: 'phaser-example',
+                physics: {
+                    default: 'arcade',
+                    arcade: {
+                        //gravity: { y: 300 },
+                        //debug: false
+                        enableSleeping: true,
+                        debug: true,
+                        gravity: {
+                            y: 0
+                        }
+                    }
+                },
+                scene: {
+                    preload: preload,
+                    create: create,
+                    update: update
+                }
+            }
+            var game = new Phaser.Game(config);
+
+            var cue;
+            function preload ()
+            {
+
+                this.load.image('table', 'https://i.ibb.co/L5p4XPN/table1920x1080.png');
+
+                //test
+                this.load.image('hsolid', 'https://i.ibb.co/B26tqkP/h-Transparent-Solid.png');
+                this.load.image('vsolid', 'https://i.ibb.co/mN8WXRv/v-Transparent-Solid.png');
+                this.load.image('hSolidExt', 'https://i.ibb.co/xFw2jmw/h-Transparent-Solid-Ext.png');
+                this.load.image('vSolidExt', 'https://i.ibb.co/DVbq9Bq/v-Transparent-Solid-Ext.png');
+                this.load.image('holeBig', 'https://i.ibb.co/4sKzxgT/hole-Corner.png');
+                
+                this.load.image('cue', 'https://i.ibb.co/pW7Vr0b/taco-Madera-Dibujo-Punta-Delgada300x10.png');//wwun
+                
+                this.load.image('whiteBall', 'https://i.ibb.co/VQ7XwLG/white-Ball.png');
+                this.load.image('ball01', 'https://i.ibb.co/PMz49w2/ball01.png');
+                this.load.image('ball02', 'https://i.ibb.co/mNtFs3m/ball02.png');
+                this.load.image('ball03', 'https://i.ibb.co/yXDNntF/ball03.png');
+                this.load.image('ball04', 'https://i.ibb.co/3h6jyDN/ball04.png');
+                this.load.image('ball05', 'https://i.ibb.co/rZygsTM/ball05.png');
+                this.load.image('ball06', 'https://i.ibb.co/1zny081/ball06.png');
+                this.load.image('ball07', 'https://i.ibb.co/R6QvC8K/ball07.png');
+                this.load.image('ball08', 'https://i.ibb.co/10yyQWm/ball08.png');
+                this.load.image('ball09', 'https://i.ibb.co/3zk1jfh/ball09.png');
+                this.load.image('ball10', 'https://i.ibb.co/C90QqfX/ball10.png');
+                this.load.image('ball11', 'https://i.ibb.co/BLssSRx/ball11.png');
+                this.load.image('ball12', 'https://i.ibb.co/vmbYCCR/ball12.png');
+                this.load.image('ball13', 'https://i.ibb.co/QJVppGw/ball13.png');
+                this.load.image('ball14', 'https://i.ibb.co/S3kZbvc/ball14.png');
+                this.load.image('ball15', 'https://i.ibb.co/smRXSyY/ball15.png');
+            }
+
+            var bolaBlanca, bola1, bola2, bola3, bola4, bola5, bola6, bola7, bola8, bola9, bola10, bola11, bola12, bola13, bola14, bola15;
+            var arregloDeBolasCompleto;
+            var isNewShoot = false;
+            var isNewOpeningShoot = true;
+
+            var posX = [], posY = [];                   //arreglo de posiciones iniciales
+            var arregloAleatorio = [];                  //arreglo para ordenamiento inicial
+
+            var arregloBolasJugador1;
+            var arregloBolasJugador2;
+
+            var radianAngle = 30 * (Math.PI / 180);     //ángulo ordenamiento inicial
+            var pmx = 1270;                             //posición bola 8
+            var pmy = 654;                              //posición bola 8
+            //test
+            //var platforms;
+            //fin test
+            
+            function create ()
+            {
+                
+                arregloDeBolasCompleto = [bolaBlanca, bola1, bola2, bola3, bola4, bola5, bola6, bola7, bola8,
+                                            bola9, bola10, bola11, bola12, bola13, bola14, bola15];
+
+                this.add.image(960, 540, 'table');
+
+                //grupo de bandas de mesa
+                platforms = this.physics.add.staticGroup();
+                
+                platforms.create(656, 312, 'hsolid');
+                platforms.create(656, 992, 'hsolid');
+                platforms.create(1266, 312, 'hsolid');
+                platforms.create(1266, 992, 'hsolid');
+                platforms.create(314, 650, 'vsolid');
+                platforms.create(1604, 650, 'vsolid');
+                platforms.create(960, 278, 'hSolidExt');
+                platforms.create(960, 1028, 'hSolidExt');
+                platforms.create(280, 650, 'vSolidExt');
+                platforms.create(1638, 650, 'vSolidExt');
+                
+                //grupo de hoyos
+                holes = this.physics.add.staticGroup();
+                holes.create(345, 343, 'holeBig').setCircle(22.00);
+                holes.create(345, 997, 'holeBig').setCircle(22.00);
+                holes.create(1609, 343, 'holeBig').setCircle(22.00);
+                holes.create(1609, 997, 'holeBig').setCircle(22.00);
+                holes.create(986, 338, 'holeBig').setCircle(14.00);
+                holes.create(986, 1022, 'holeBig').setCircle(14.00);
+                
+                
+                cue = this.add.sprite(654, 655, 'cue').setOrigin(0, 0.5);
+                cue.angle = -180;   //la imagen original está de derecha a izquierda, corregir y borrar esta línea
+
+                /*
+                setCircle(radius, offsetX, offsetY)
+                Sets this Body as using a circle, of the given radius, for all collision detection instead of a rectangle. The radius is given in pixels and is the distance from the center of the circle to the edge.
+                You can also control the x and y offset, which is the position of the Body relative to the top-left of the Sprite.
+                To change a Body back to being rectangular again call Body.setSize.
+                Note: Circular collision only happens with other Arcade Physics bodies, it does not work against tile maps, where rectangular collision is the only method supported.
+                */
+
+                //creando posiciones aleatorias para ubicar las bolas en el tiro inicial
+                arregloAleatorio = crearPosicionesAleatorio();
+                
+                //validando posición de extremos
+                arregloAleatorio = validarUbicacionDeExtremos(arregloAleatorio);
+                
+                //seteando posiciones iniciales en función de la posicón de la bola 8
+                
+                ordenarBolas();
+                
+                bolaTest = this.physics.add.image(posX[0], posY[0], 'whiteBall');
+                arregloDeBolasCompleto[0] = new Bola(0, "blanca", bolaTest);
+                arregloDeBolasCompleto[0].getBola().setVelocity(1000, 0);
+                
+                bolaTest = this.physics.add.image(posX[1], posY[1], 'ball01');
+                arregloDeBolasCompleto[1] = new Bola(1, "solida", bolaTest);
+                //
+                bolaTest = this.physics.add.image(posX[2], posY[2], 'ball02');
+                arregloDeBolasCompleto[2] = new Bola(2, "solida", bolaTest);
+                
+                bolaTest = this.physics.add.image(posX[3], posY[3], 'ball03');
+                arregloDeBolasCompleto[3] = new Bola(3, "solida", bolaTest);
+                //
+                bolaTest = this.physics.add.image(posX[4], posY[4], 'ball04');
+                arregloDeBolasCompleto[4] = new Bola(4, "solida", bolaTest);
+                
+                bolaTest = this.physics.add.image(posX[5], posY[5], 'ball05');
+                arregloDeBolasCompleto[5] = new Bola(5, "solida", bolaTest);
+                
+                bolaTest = this.physics.add.image(posX[6], posY[6], 'ball06');
+                arregloDeBolasCompleto[6] = new Bola(6, "solida", bolaTest);
+                //
+                bolaTest = this.physics.add.image(posX[7], posY[7], 'ball07');
+                arregloDeBolasCompleto[7] = new Bola(7, "solida", bolaTest);
+                
+                bolaTest = this.physics.add.image(posX[8], posY[8], 'ball08');
+                arregloDeBolasCompleto[8] = new Bola(8, "negra", bolaTest);
+                
+                bolaTest = this.physics.add.image(posX[9], posY[9], 'ball09');
+                arregloDeBolasCompleto[9] = new Bola(9, "rayada", bolaTest);
+                
+                bolaTest = this.physics.add.image(posX[10], posY[10], 'ball10')
+                arregloDeBolasCompleto[10] = new Bola(10, "rayada", bolaTest);
+                //
+                bolaTest = this.physics.add.image(posX[11], posY[11], 'ball11');
+                arregloDeBolasCompleto[11] = new Bola(11, "rayada", bolaTest);
+                
+                bolaTest = this.physics.add.image(posX[12], posY[12], 'ball12');
+                arregloDeBolasCompleto[12] = new Bola(12, "rayada", bolaTest);
+                
+                bolaTest = this.physics.add.image(posX[13], posY[13], 'ball13');
+                arregloDeBolasCompleto[13] = new Bola(13, "rayada", bolaTest);
+                
+                bolaTest = this.physics.add.image(posX[14], posY[14], 'ball14');
+                arregloDeBolasCompleto[14] = new Bola(14, "rayada", bolaTest);
+                
+                bolaTest = this.physics.add.image(posX[15], posY[15], 'ball15');
+                arregloDeBolasCompleto[15] = new Bola(15, "rayada", bolaTest);
+                
+                //agregando propiedades a las bolas: rebote, radio y límite para colisiones
+                for(i=0; i<=15; i++){
+                    arregloDeBolasCompleto[i].getBola().setBounce(1,1); //setBounce(0.9, 0.9);
+                    arregloDeBolasCompleto[i].getBola().setCircle(18.00); //16.07
+                    arregloDeBolasCompleto[i].getBola().setCollideWorldBounds(true);
+                }
+
+                //agregando física de choques
+                for(i=0; i<15; i++){
+                    for(j= i+1; j<16; j++){
+                        this.physics.add.collider( arregloDeBolasCompleto[i].getBola(),arregloDeBolasCompleto[j].getBola());
+                    }
+                }
+                
+                //bounds
+                //crea las colisiones contra las bandas de la mesa
+                for(i=0; i<16; i++){
+                    this.physics.add.collider(arregloDeBolasCompleto[i].getBola(),platforms);
+                }
+                
+                //valida que todas las bolas colisionen contra los hoyos
+                for(i=0; i<16; i++){
+                    this.physics.add.overlap(arregloDeBolasCompleto[i].getBola(), holes, setInsertedOnHole);//, null, this);
+                }
+                
+                //valida que las bolas se hayan insertado en los hoyos
+                function setInsertedOnHole(bola, corner){
+                    var insertedBalls = [];
+                    //console.log(bola.getNumeroDeBola());
+                    for(i=0; i<arregloDeBolasCompleto.length; i++){
+                        if(arregloDeBolasCompleto != null)
+                            if(bola == arregloDeBolasCompleto[i].getBola()){
+                                //alert("ball inserted: "+arregloDeBolasCompleto[i].getNumeroDeBola());
+                                if(validarBola8(arregloDeBolasCompleto[i])){
+                                    return null;
+                                }
+                                //validarBolaBlanca(arregloDeBolasCompleto[i]);
+                                insertedBalls.push(arregloDeBolasCompleto[i]);
+                                arregloDeBolasCompleto[i].getBola().disableBody(true, true);
+                                //alert("ball inserted: "+i);
+                            }
+                    }
+                    /*
+                    for(i=0; insertedBalls.length; i++){
+                        console.log(insertedBalls.pop().getNumeroDeBola());
+                    }
+                    */
+                    //if(firstShoot == true && insertedBalls.length > 0)  //vaidar que todas las bolas hayan parado o que sea la blanca o la 8
+                    validarBolasMetidasEnPrimerTiro(insertedBalls);
+                }
+            }
+
+            function validarBola8(bola){//aca
+                if(bola.getNumeroDeBola() == 8){
+                    if(isNewOpeningShoot == true){ //isNewOpeningShoot variable global
+                        crearPosicionesAleatorio();
+                        validarUbicacionDeExtremos(arregloAleatorio);
+                        ordenarBolas();
+                        for(i=0; i<16; i++){
+                            arregloDeBolasCompleto[i].getBola().enableBody(true, posX[i], posY[i], true, true);
+                        }
+                        //borrar
+                        arregloDeBolasCompleto[0].getBola().setVelocity(1000, 0);
+                        console.log("bola 8!");
+                    }else{//agregar validación si ya se ha metido todo
+                        console.log("perdiste!");
+                    }
+                    return true;
+                }
+            }
+
+            function validarBolaBlanca(bola){
+                if(bola.getNumeroDeBola() == 0){
+                    if(isNewOpeningShoot == true){
+                        //cambiarTurno();
+                        console.log("bola Blanca!");
+                    }else{//agregar validación si ya se ha metido todo
+                        console.log("Falta!");
+                    }
+                        
+                }
+            }
+
+            function validarBolasMetidasEnPrimerTiro(insertedBalls){
+                for(i=0; i<insertedBalls.length; i++){
+                    if(insertedBalls[0].getTipoDeBola()=="rayada")
+                        console.log("rayada!");
+                    if(insertedBalls[0].getTipoDeBola()=="solida")
+                        console.log("solida!");
+                }
+            }
+
+            //movimiento del taco
+            function cueMovement(angleAmount){
+                cue.angle += (0.8*Math.round(angleAmount));
+            }
+
+            //se puede borrar
+            function moveClockWise(angleAmount){ //wwun
+                cue.angle -= (0.8*Math.round(angleAmount)); //gira el ángulo horario
+            }
+
+            //se puede borrar
+            function moveAntiClockWise(angleAmount){ //wwun
+                cue.angle += (0.8*Math.round(angleAmount)); //gira el ángulo antihorario
+            }
+
+            function update()
+            {
+                //arregloDeBolasCompleto[0].getBola().x=100; arregloDeBolasCompleto[0].getBola().y=100;
+                /*
+                if(isNewShoot == true){
+                    if(cursor.includes("GyroscopeXLEFT")){
+                        var movimientoCapturado = cursor.split(":");
+                        //moveAntiClockWise(movimientoCapturado[1]);
+                        cueMovement(movimientoCapturado[1]);
+                    }
+
+                    if(cursor.includes("GyroscopeXRIGHT")){
+                        var movimientoCapturado = cursor.split(":");
+                        //moveClockWise(Math.abs(movimientoCapturado[1]));
+                        cueMovement(movimientoCapturado[1]);
+                    }                    
+                }
+                //fin if(isNewShoot == true)
+
+                if(isNewOpeningShoot == true){
+                    if (cursor.includes("GyroscopeX"))
+                    {
+                        var movimientoCapturado = cursor.split(":");
+                        if(cursor.includes("RIGHT") && (bolaBlanca.x > 0)){ //este if solo tiene razón de ser porque controla los límites, se podría factorizar con el de abajo si no hubiera esta condición
+                            //ball.x -= movimientoCapturado[1];
+                            console.log("Right: "+movimientoCapturado[1]);
+                            bolaBlanca.x += (movimientoCapturado[1] * 1); //en este caso, android envía un valor negativo
+                        }else 
+                            if (cursor.includes("LEFT") && ((bolaBlanca.x + 70) < config.width)){ //sumándole el ancho de la bola
+                                bolaBlanca.x += (movimientoCapturado[1] * 1);  //multiplicado por uno para poder configurar sensibilidad
+                            }
+                    }
+
+                    if (cursor.includes("GyroscopeY"))
+                    {
+                        var movimientoCapturado = cursor.split(":");
+                        if(cursor.includes("UP") && (bolaBlanca.y > 0)){ //este if solo tiene razón de ser porque controla los límites, se podría factorizar con el de abajo si no hubiera esta condición
+                            //ball.y -= movimientoCapturado[1];
+                            console.log("UP: "+movimientoCapturado[1]);
+                            bolaBlanca.y -= (movimientoCapturado[1] * 1); //la parte superior de la pantalla es cero y la inferior el tamaño de la pantalla definida
+                        }else 
+                            if (cursor.includes("DOWN") && ((bolaBlanca.y + 70) < config.height)){ //sumándole el ancho de la bola
+                                console.log("DOWN: "+movimientoCapturado[1]);
+                                bolaBlanca.y += (-1)*(movimientoCapturado[1] * 1);
+                            }
+                    }
+                }
+                */
+                var ballVelocity = arregloDeBolasCompleto[0];
+                /*
+                //if(isNewShoot == false && isNewOpeningShoot != true){
+                if(isNewOpeningShoot == true){
+                    arregloDeBolasCompleto[0].getBola().setVelocity(arregloDeBolasCompleto[0].getBola().body.velocity.x*0.996, arregloDeBolasCompleto[0].getBola().body.velocity.y*0.996);
+                    arregloDeBolasCompleto[1].getBola().setVelocity(arregloDeBolasCompleto[1].getBola().body.velocity.x*0.996, arregloDeBolasCompleto[1].getBola().body.velocity.y*0.996);
+                    arregloDeBolasCompleto[2].getBola().setVelocity(arregloDeBolasCompleto[2].getBola().body.velocity.x*0.996, arregloDeBolasCompleto[2].getBola().body.velocity.y*0.996);
+                    arregloDeBolasCompleto[3].getBola().setVelocity(arregloDeBolasCompleto[3].getBola().body.velocity.x*0.996, arregloDeBolasCompleto[3].getBola().body.velocity.y*0.996);
+                    arregloDeBolasCompleto[4].getBola().setVelocity(arregloDeBolasCompleto[4].getBola().body.velocity.x*0.996, arregloDeBolasCompleto[4].getBola().body.velocity.y*0.996);
+                    arregloDeBolasCompleto[5].getBola().setVelocity(arregloDeBolasCompleto[5].getBola().body.velocity.x*0.996, arregloDeBolasCompleto[5].getBola().body.velocity.y*0.996);
+                    arregloDeBolasCompleto[6].getBola().setVelocity(arregloDeBolasCompleto[6].getBola().body.velocity.x*0.996, arregloDeBolasCompleto[6].getBola().body.velocity.y*0.996);
+                    arregloDeBolasCompleto[7].getBola().setVelocity(arregloDeBolasCompleto[7].getBola().body.velocity.x*0.996, arregloDeBolasCompleto[7].getBola().body.velocity.y*0.996);
+                    arregloDeBolasCompleto[8].getBola().setVelocity(arregloDeBolasCompleto[8].getBola().body.velocity.x*0.996, arregloDeBolasCompleto[8].getBola().body.velocity.y*0.996);
+                    arregloDeBolasCompleto[9].getBola().setVelocity(arregloDeBolasCompleto[9].getBola().body.velocity.x*0.996, arregloDeBolasCompleto[9].getBola().body.velocity.y*0.996);
+                    arregloDeBolasCompleto[10].getBola().setVelocity(arregloDeBolasCompleto[10].getBola().body.velocity.x*0.996, arregloDeBolasCompleto[10].getBola().body.velocity.y*0.996);
+                    arregloDeBolasCompleto[11].getBola().setVelocity(arregloDeBolasCompleto[11].getBola().body.velocity.x*0.996, arregloDeBolasCompleto[11].getBola().body.velocity.y*0.996);
+                    arregloDeBolasCompleto[12].getBola().setVelocity(arregloDeBolasCompleto[12].getBola().body.velocity.x*0.996, arregloDeBolasCompleto[12].getBola().body.velocity.y*0.996);
+                    arregloDeBolasCompleto[13].getBola().setVelocity(arregloDeBolasCompleto[13].getBola().body.velocity.x*0.996, arregloDeBolasCompleto[13].getBola().body.velocity.y*0.996);
+                    arregloDeBolasCompleto[14].getBola().setVelocity(arregloDeBolasCompleto[14].getBola().body.velocity.x*0.996, arregloDeBolasCompleto[14].getBola().body.velocity.y*0.996);
+                    arregloDeBolasCompleto[15].getBola().setVelocity(arregloDeBolasCompleto[15].getBola().body.velocity.x*0.996, arregloDeBolasCompleto[15].getBola().body.velocity.y*0.996);
+                    //if(a === 500){
+                        //bolaBlanca.setVelocity(500, 900);
+                    //}
+                    //console.log("0 = "+arregloDeBolasCompleto[0].getBola().body.velocity.x+" 1 = "+arregloDeBolasCompleto[1].getBola().body.velocity.x);
+                    ballVelocity++;
+                }*/
+
+                bolasParadas = 0;
+                for(i=0; i<=15; i++){
+                    if(arregloDeBolasCompleto[i].getBola().body.velocity.x<1.5 && arregloDeBolasCompleto[i].getBola().body.velocity.x>-1.5 && arregloDeBolasCompleto[i].getBola().body.velocity.y<1.5 && arregloDeBolasCompleto[i].getBola().body.velocity.y>-1.5){
+                        bolasParadas++;
+                    }
+                }
+                
+                if(bolasParadas>=16){
+                    isNewOpeningShoot = false;
+                    console.log("bolas paradas");
+                    //alert("bolas paradas");
+                }
+
+                //if(a==10)
+                    //alert("");
+                //alert(bolaBlanca.x);
+            }
+
+            function crearPosicionesAleatorio(){        //crea las posiciones aleatorias y las ubica en un array
+                console.log("llamada crearPosicionesAleatorio");
+                var arregloAleatorioTmp = [];
+                var arregloAleatorioString = "random pos: ";
+
+                arregloAleatorioTmp[0] = 0;
+                arregloAleatorioTmp[1] = 1;
+                arregloAleatorioTmp[8] = 8;
+
+                for(i=0; i<=15; i++){   //creando valores aleatorios
+                    pos = Math.floor(Math.random() * 16);
+                    for(j=0; j<i; j++){ //buscando si existe el valor en el arreglo temporal
+                        if(arregloAleatorioTmp[j]==pos || pos==0 || pos==1 || pos==8){
+                            pos = Math.floor(Math.random() * 16);
+                            j=-1;
+                        }
+                    }
+                    
+                    if(i!=0 && i!=1 && i!=8)
+                        arregloAleatorioTmp[i] = pos;
+                }
+
+                for(i=0; i<=15; i++)
+                    arregloAleatorioString += "["+arregloAleatorioTmp[i]+"]";
+                
+                console.log(arregloAleatorioString);
+                return arregloAleatorioTmp;
+            }
+
+            function validarUbicacionDeExtremos(arregloAleatorio){
+                console.log("llamada validarUbicacionDeExtremos");
+                var ubicacionDeExtremosString = "u. ext.";
+                var cambio=false;
+                if(arregloAleatorio[11]<8 && arregloAleatorio[15]<8){ //la posición 7 le corresponde a la bola 9
+
+                    for(i=0; i<=15; i++){
+                        console.log("["+arregloAleatorio+"]");
+                    }
+
+                    for(i=2; i<=15; i++){
+                        if(arregloAleatorio[i]>8){
+                            var temp = arregloAleatorio[i];
+                            arregloAleatorio[i] = arregloAleatorio[15];
+                            arregloAleatorio[15] = temp;
+                            break;
+                        }
+                    }
+                    console.log("[11] : "+arregloAleatorio[11]);
+                    console.log("[15] : "+arregloAleatorio[15]);
+                    cambio=true;
+                }
+                if(arregloAleatorio[11]>8 && arregloAleatorio[15]>8){ //la posición 7 le corresponde a la bola 9
+
+                    for(i=0; i<=15; i++){
+                        console.log("["+arregloAleatorio+"]");
+                    }
+
+                    for(i=2; i<=15; i++){
+                        if(arregloAleatorio[i]<8){
+                            var temp = arregloAleatorio[i];
+                            arregloAleatorio[i] = arregloAleatorio[15];
+                            arregloAleatorio[15] = temp;
+                            break;
+                        }
+                    }
+                    console.log("[11] : "+arregloAleatorio[11]);
+                    console.log("[15] : "+arregloAleatorio[15]);
+                    cambio=true;
+                }
+                if(cambio == true){
+                    for(i=0; i<=15; i++){
+                        ubicacionDeExtremosString += "["+arregloAleatorio[i]+"]";
+                    }
+                    console.log(ubicacionDeExtremosString);
+                }
+                return arregloAleatorio;
+            }
+
+            function ordenarBolas(){
+                posX[arregloAleatorio[0]] = 654;                                      posY[arregloAleatorio[0]] = 654;
+                posX[arregloAleatorio[1]] = pmx - (2 * 36 * Math.cos(radianAngle));   posY[arregloAleatorio[1]] = pmy;
+                posX[arregloAleatorio[2]] = pmx - (1 * 36 * Math.cos(radianAngle));   posY[arregloAleatorio[2]] = pmy - (36/2);
+                posX[arregloAleatorio[3]] = pmx - (1 * 36 * Math.cos(radianAngle));   posY[arregloAleatorio[3]] = pmy + (36/2);
+                posX[arregloAleatorio[4]] = pmx;                                      posY[arregloAleatorio[4]] = pmy - 36;
+                posX[arregloAleatorio[5]] = pmx;                                      posY[arregloAleatorio[5]] = pmy + 36;
+                posX[arregloAleatorio[6]] = pmx + (1 * 36 * Math.cos(radianAngle));   posY[arregloAleatorio[6]] = pmy - (3*36/2);
+                posX[arregloAleatorio[7]] = pmx + (1 * 36 * Math.cos(radianAngle));   posY[arregloAleatorio[7]] = pmy - (1*36/2);
+                posX[arregloAleatorio[8]] = pmx;                                      posY[arregloAleatorio[8]] = pmy;
+                posX[arregloAleatorio[9]] = pmx + (1 * 36 * Math.cos(radianAngle));   posY[arregloAleatorio[9]] = pmy + (1*36/2);
+                posX[arregloAleatorio[10]]= pmx + (1 * 36 * Math.cos(radianAngle));   posY[arregloAleatorio[10]]= pmy + (3*36/2);
+                posX[arregloAleatorio[11]]= pmx + (2 * 36 * Math.cos(radianAngle));   posY[arregloAleatorio[11]]= pmy - (2*36);
+                posX[arregloAleatorio[12]]= pmx + (2 * 36 * Math.cos(radianAngle));   posY[arregloAleatorio[12]]= pmy - 36;
+                posX[arregloAleatorio[13]]= pmx + (2 * 36 * Math.cos(radianAngle));   posY[arregloAleatorio[13]]= pmy;
+                posX[arregloAleatorio[14]]= pmx + (2 * 36 * Math.cos(radianAngle));   posY[arregloAleatorio[14]]= pmy + (2*36/2);
+                posX[arregloAleatorio[15]]= pmx + (2 * 36 * Math.cos(radianAngle));   posY[arregloAleatorio[15]]= pmy + (4*36/2);
+            }
+
+            class Bola{
+                constructor(numeroDeBola, tipoDeBola, bola){
+                    this.numeroDeBola = numeroDeBola;
+                    this.tipoDeBola = tipoDeBola;
+                    this.bola = bola;
+                }
+                
+                setNumeroDeBola(numeroDeBola){
+                    this.numeroDeBola = numeroDeBola;
+                }
+                
+                setTipoDeBola(tipoDeBola){
+                    this.tipoDeBola = tipoDeBola;
+                }
+                
+                getNumeroDeBola(){
+                    return this.numeroDeBola;
+                }
+                
+                getTipoDeBola(){
+                    return this.tipoDeBola;
+                }
+
+                setBola(bola){
+                    this.bola = bola;
+                }
+
+                getBola(){
+                    return this.bola;
+                }
+            }
+
+        </script>
     </head>
 
-    <body onload="loadUsersData()">
+    <body>
 
         <div class="space-block"></div>
 
@@ -55,72 +574,6 @@
                 </td>
             </tr>
         </table>
-
-        <div class="space-block"></div>
-
-<!--
-        <div class="space-block"></div>
-
-        <div table="tableRow">
-            <div class="column">
-                <img src="img/user.png" width="15%">
-                User 1
-            </div>
-            <div>
-                <img src="img/ball1.png" height="50px" width="50px">
-                <img src="img/ball2.png" height="50px" width="50px">
-                <img src="img/ball3.png" height="50px" width="50px">
-                <img src="img/ball4.png" height="50px" width="50px">
-                <img src="img/ball5.png" height="50px" width="50px">
-                <img src="img/ball6.png" height="50px" width="50px">
-                <img src="img/ball7.png" height="50px" width="50px">
-            </div>
-        </div>
-
-        <div table="tableRow">
-            <div class="column">
-                <img src="img/user.png" width="15%">
-                User 1
-            </div>
-            <div>
-                <img src="img/ball9.png" height="50px" width="50px">
-                <img src="img/ball10.png" height="50px" width="50px">
-                <img src="img/ball11.png" height="50px" width="50px">
-                <img src="img/ball12.png" height="50px" width="50px">
-                <img src="img/ball13.png" height="50px" width="50px">
-                <img src="img/ball14.png" height="50px" width="50px">
-                <img src="img/ball15.png" height="50px" width="50px">
-            </div>
-        </div>
--->
-        <div class="space-block"></div>
-
-        <img src="img/mesa.jpg" width="100%">
-
-        <script>
-            function loadUsersData(){
-                var urlParams = new URLSearchParams(window.location.search);
-                //var player1Name = urlParams.get('player1Name');
-                //alert("player1Name: "+player1Name);
-                document.getElementById("lblUser1Id").innerHTML = urlParams.get('player1Name');
-                document.getElementById("lblUser2Id").innerHTML = urlParams.get('player2Name');
-            }
-        </script>
-
-        <script>
-            //alert("Juego!");
-            console.log("cursor: "+cursor);
-            //this.cursors = this.input.keyboard.createCursorKeys();
-            if(cursor.includes("nombreDelJugador1:") || cursor.includes("Jugador1")){
-                alert("Estás por buen camnino");
-            }
-
-            /*
-            if(cursor == ""){
-                alert("cursor vacío");
-            }
-            */
-        </script>
 
     </body>
 </html>

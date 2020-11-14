@@ -15,18 +15,22 @@
     <body type="text/javascript">
         <script>
             //inicio capturando movimiento
-            document.onkeydown = function(e){
-                if(e.keyCode == 37){
-                    moveAntiClockWise(1);
+            /*document.onkeydown = function(e){
+                if(e.keyCode == 37){            //izqierda
+                    //movimientoX = -50;
+                    moverX(-50);
                 }
-                if(e.keyCode == 39){
-                    moveClockWise(1);
+                if(e.keyCode == 39){            //derecha
+                    //movimientoX = 50;
+                    moverX(50);
                 }
-                if(e.keyCode == 32){
-                    //alert('hitWhiteBall');
-                    hitWhiteBall();
+                if(e.keyCode == 38){            //arriba
+                    movimientoY = -50;
                 }
-            }
+                if(e.keyCode == 40){            //abajo
+                    movimientoY = 50;
+                }
+            }*/
             //fin capturando movimiento
 
             //captar cursor
@@ -43,23 +47,8 @@
                 },
                 false);
             
-            audio.play();
+            //audio.play();
             //fin captar cursor
-
-            /*
-            var game = new Phaser.Game(
-                type: Phaser.AUTO,
-                width: 1920,
-                height: 1080,
-                transparent: true, 
-                //Phaser.CANVAS, 
-                parent: 'phaser-example', 
-                scene: { 
-                    preload: preload, 
-                    create: create 
-                }
-            );
-            */
 
             var config = {
                 type: Phaser.AUTO,
@@ -67,12 +56,16 @@
                 height: 1080,
                 //transparent: true,
                 backgroundColor: '#006400',
-                parent: 'phaser-example',
+                //parent: 'phaser-example',
                 physics: {
                     default: 'arcade',
                     arcade: {
                         //gravity: { y: 300 },
-                        debug: false
+                        //debug: false
+                        enableSleeping: true,
+                        gravity: {
+                            y: 0
+                        }
                     }
                 },
                 scene: {
@@ -80,66 +73,115 @@
                     create: create,
                     update: update
                 }
-            };
+            }
             
             var game = new Phaser.Game(config);
-            
-            var ball;
+
+            //var movimientoX;
+            var movimientoY;
             
             function preload ()
             {
-                this.load.spritesheet('ball', 'https://i.ibb.co/Yy8GcWT/white-Ball.png', { frameWidth: 200, frameHeight: 200 });//wwun
+                this.load.image('ball', 'https://i.ibb.co/Yy8GcWT/white-Ball.png');//wwun
             }
 
-            var image;
-
+            var ball;
+            
             function create ()
             {
-                //this.matter.world.setBounds(0, 0, 1920, 1080, 32, true, true, false, true);
-                
-                //var ball = this.matter.add.image(500, 500, 'ball');
-                //ball.setCircle();
-                //ball.setFriction(0.005);
-                //ball.setBounce(1);
+                cursors = this.input.keyboard.createCursorKeys();
 
-                ball = this.physics.add.sprite(100, 450, 'ball');
-                ball.setBounce(0.2);
+                //movimientoX = 0;
+                movimientoY = 0;
+
+                ball = this.physics.add.image(700, 450, 'ball'); //posición inicial
+                ball.setVelocity(0, 0);
+                //ball.setFriction(0.005,0.005);
+                ball.setBounce(0.9, 0.9);
+                ball.setCircle(16.07);
                 ball.setCollideWorldBounds(true);
 
-                this.anims.create({
-                    key: 'left',
-                    frames: this.anims.generateFrameNumbers('ball', { start: 0, end: 3 }),
-                    frameRate: 10,
-                    repeat: -1
-                });
-
-                this.anims.create({
-                    key: 'turn',
-                    frames: [ { key: 'ball', frame: 4 } ],
-                    frameRate: 20
-                });
-
-                this.anims.create({
-                    key: 'right',
-                    frames: this.anims.generateFrameNumbers('ball', { start: 5, end: 8 }),
-                    frameRate: 10,
-                    repeat: -1
-                });
-
-                cursors = this.input.keyboard.createCursorKeys();
+                this.physics.add.existing(ball, true);
+                //this.physics.add.collider(ball);
             }
 
-            function update ()
-            {
-                //arrow.angle += 0.2; //gira el ángulo
+            //var a = 0;
+            function update() {
+                //ball.setVelocityX(500);
+                //ball.setVelocityY(80,20);
+                //ball.setVelocity(ball.body.velocity.x*0.996, ball.body.velocity.y*0.996);
 
-                //escribe texto blanco sobre rotación
-                
-                ball.setVelocityX(180);
+                //captura del teclado
+                /*
+                if (cursors.left.isDown && ball.x > 0)
+                {
+                    //ball.setAngle(90);
+                    ball.x -= 2.5;
+                }
+                else if (cursors.right.isDown && (ball.x + 70) < config.width) //sumándole el ancho de la bola
+                {
+                    //ball.setAngle(-90);
+                    ball.x += 2.5;
+                }
+                if (cursors.up.isDown && ball.y > 0)
+                {
+                    ball.y -= 2.5;
+                }
+                else if (cursors.down.isDown && (ball.y + 70) < 1080)
+                {
+                    ball.y += 2.5;
+                }
+                */
+                //fin de captura de teclado
 
-                ball.anims.play('right', true);
+                //captura del sensor
+                if (cursor.includes("GyroscopeX"))
+                {
+                    var movimientoCapturado = cursor.split(":");
+                    if(cursor.includes("RIGHT") && (ball.x > 0)){ //este if solo tiene razón de ser porque controla los límites, se podría factorizar con el de abajo si no hubiera esta condición
+                        //ball.x -= movimientoCapturado[1];
+                        console.log("Right: "+movimientoCapturado[1]);
+                        ball.x /*-= 1;*/ += (movimientoCapturado[1] * 1); //en este caso, android envía un valor negativo
+                    }else 
+                        if (cursor.includes("LEFT") && ((ball.x + 70) < config.width)){ //sumándole el ancho de la bola
+                            ball.x += (movimientoCapturado[1] * 1);  //multiplicado por uno para poder configurar sensibilidad
+                        }
+                }
 
+                if (cursor.includes("GyroscopeY"))
+                {
+                    var movimientoCapturado = cursor.split(":");
+                    if(cursor.includes("UP") && (ball.y > 0)){ //este if solo tiene razón de ser porque controla los límites, se podría factorizar con el de abajo si no hubiera esta condición
+                        //ball.y -= movimientoCapturado[1];
+                        console.log("UP: "+movimientoCapturado[1]);
+                        ball.y -= (movimientoCapturado[1] * 1); //la parte superior de la pantalla es cero y la inferior el tamaño de la pantalla definida
+                    }else 
+                        if (cursor.includes("DOWN") && ((ball.y + 70) < config.height)){ //sumándole el ancho de la bola
+                            console.log("DOWN: "+movimientoCapturado[1]);
+                            ball.y += (-1)*(movimientoCapturado[1] * 1);
+                        }
+                }
+                /*
+                if (cursor.includes("GyroscopeY"))
+                {
+                    if (cursors.up.isDown && ball.y > 0)
+                    {
+                        ball.y -= 2.5;
+                    }
+                    else if (cursors.down.isDown && (ball.y + 70) < 1080)
+                    {
+                        ball.y += 2.5;
+                    }
+                }
+                */
+                //fin de captura del sensor
             }
+
+            function moverX(movimientoX){
+                //ball.setVelocityX(movimientoX);
+                ball.setPositionX(100);
+            }
+
         </script>
     </body>
 </html>

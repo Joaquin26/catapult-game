@@ -26,10 +26,18 @@ function goPlayer2(){
     $(location).attr("href","../Game/player2.html?url="+url)
 }
 function establishConnectionGame(nombreDeJugador1, nombreDeJugador2){
-//function establishConnectionGame(){
-    //$(location).attr("href","../Game/gameTest.html?player1Name="+nombreDeJugador1+"&player2Name="+nombreDeJugador2+"&url="+url)
-    $(location).attr("href","../Game/pocSensors.html?url="+url)
+    $(location).attr("href","../Game/gameTest.html?player1Name="+nombreDeJugador1+"&player2Name="+nombreDeJugador2+"&url="+url)
 }
+
+//wwun: funciones temporales para las pruebas de concepto
+function tmpEstablishConnectionGameCue(){
+    $(location).attr("href","../Game/pocSensors.html?url="+url)//llama al html del taco
+}
+function tmpEstablishConnectionGameWhiteBall(){
+    $(location).attr("href","../Game/movingWhiteBall.html?url="+url)
+}
+//fin de funciones temporales para las pruebas de concepto
+
 function goInstructions(){
     $(location).attr("href","../Game/instructions.html")
 }

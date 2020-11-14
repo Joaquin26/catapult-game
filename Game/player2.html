@@ -62,9 +62,6 @@
 
     <div style="position: relative;">
       <div style="position: relative; height: 100px; left: 300px;">
-          <!--
-          <img src="../Assets/menu/FORNAME1PLAYER.png">
-          -->
       </div>
 
       <div style="text-align: center;">
@@ -75,39 +72,55 @@
       <div style="height: 40px;"></div>
       
       <div style="text-align: center;">
-        <img src="../Assets/menu/REDCYRCLEBUTTON.png" height="3%" width="3%"></img>
+        <img src="../Assets/menu/REDCYRCLEBUTTON.png" height="3%" width="3%" id="btnReady2"></img>
         <input style="height: 25px; background-color: transparent; border: none; outline: none; border-bottom:1px solid #fff; color: #555; font-style: italic; font-size: 24px;" type="text" name="txtNombreJugador2" id="txtNombreJugador2" value="Jugador2" onfocus="this.value='';" size="18"></input>
       </div>
-      
-      <div style="height: 50px;"></div>
-      <div style="text-align: center;"><input type="button" name="btnNombre" id="btnNombre" value="Go" class="boton_1" onclick="goToGameAndSendNames()"></input></div>
     </div>
 
     <script type="text/javascript">
 
       //recibe el nombre
       //cambia el botón
-      function setNameAndButton(nombreDeJugador){
-        //document.getElementById("txtNombre").innerHTML = "innerHTML: ";//+nombreDeJugador;
-        document.getElementById("txtNombreJugador1").value = nombreDeJugador;
-        setTimeout(changeButton, 1000);
-        //alert(nombreDeJugador);
+
+      function setNameAndButton(whichPlayer, playerName){
+        //valida qué jugador ha ingresado el nombre
+        if(whichPlayer.includes("player1")){
+          document.getElementById("txtNombreJugador1").value = playerName;
+          setTimeout(changeButton("btnReady1"), 1000);
+        }else{
+          if(whichPlayer.includes("player2")){
+            document.getElementById("txtNombreJugador2").value = playerName;
+            setTimeout(changeButton("btnReady2"), 1000);
+          }
+        }
       }
 
-      function changeButton(){
-        document.getElementById("btnReady1").src = "../Assets/menu/GREENCYRCLEBUTTON.png";
-        //setTimeout(goToGameAndSendName, 1000);
+      function changeButton(botonReady){
+        //cambia el botón de rojo a verde
+        if(botonReady=="btnReady1"){
+          document.getElementById("btnReady1").src = "../Assets/menu/GREENCYRCLEBUTTON.png";
+          console.log("inside changeButton if(btnReady1)");
+        }else{
+          if(botonReady=="btnReady2"){
+            document.getElementById("btnReady2").src = "../Assets/menu/GREENCYRCLEBUTTON.png";
+          }
+        }
+        //validando si ambos jugadores han ingresado su nombre
+        if(document.getElementById("txtNombreJugador1").value != "Jugador1" 
+        && document.getElementById("txtNombreJugador2").value != "Jugador2"){
+          setTimeout(goToGameAndSendNames, 1000);
+        }
+        return;
       }
 
       function goToGameAndSendName(){
-        //System.out.print("2 cursor to String: "+ cursor.toString() );
-        var nombreDeJugador = document.getElementById("txtNombre").value;
-        //alert(nombreDeJugador);
-        //establishConnectionGame();
-        establishConnectionGame(nombreDeJugador, "Machine");
+        var nombreDeJugador1 = document.getElementById("txtNombreJugador1").value;
+        var nombreDeJugador2 = document.getElementById("txtNombreJugador2").value;
+        establishConnectionGame(nombreDeJugador1, nombreDeJugador2);
       }
 
       function goToGameAndSendNames(){
+          //toma los nombres ingresados de los jugadores para enviarlos al juego
           var nombreDeJugador1 = document.getElementById("txtNombreJugador1").value;
           var nombreDeJugador2 = document.getElementById("txtNombreJugador2").value;
           establishConnectionGame(nombreDeJugador1, nombreDeJugador2);
@@ -122,7 +135,7 @@
         this.currentTime = 0;
         this.play();
       }, false);
-      audio.play();
+      //audio.play();
 
       class ScenePlayer2 extends Phaser.Scene {
         constructor() {
@@ -136,10 +149,16 @@
           this.nombreJ4text = this.add.text(1114, 626, this.nombreJ4, { fontFamily: '"Arial Black"', fontSize: 24, fill: 'black', });
         }
         update() {
-        console.log("aqui inicio " + cursor + " aqui termina");
+        //console.log("aqui inicio " + cursor + " aqui termina");
             if(cursor.includes("nombreDelJugador1")){
                 var nombreTmp = cursor.split(":");
-                setNameAndButton(nombreTmp[1]);
+                setNameAndButton("player1", nombreTmp[1]);
+            }else{
+              if(cursor.includes("nombreDelJugador2")){
+                var nombreTmp2 = cursor.split(":");
+                //TODO
+                setNameAndButton("player2", nombreTmp2[1]);
+              }
             }
         }
           
