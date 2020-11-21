@@ -88,7 +88,7 @@
                 //  
                 //  sprite.rotation = 0.785
 
-                var labelStyle = { font: "16px courier", fill: "#00ff00", align: "center" };
+                var labelStyle = { font: "16px courier", fill: "#00ff00", align: "center" }; //no necesario
 
                 //  Create a large circle, then draw the angles on it
 
@@ -99,11 +99,11 @@
 
                 var distance = 0;//wwun
 
-                graphics.lineStyle(2, 0x00bb00, 1); //grosor de la circunferencia
+                graphics.lineStyle(2, 0x00bb00, 1); //grosor de la circunferencia   //no necesario
 
-                graphics.strokeCircleShape(circle); //dibuja la circunferencia
+                graphics.strokeCircleShape(circle); //dibuja la circunferencia  //no necesario
                 
-                graphics.beginPath();
+                graphics.beginPath();   //no necesario
 
                 for (var a = 0; a < 360; a += 22.5)
                 {
@@ -111,7 +111,7 @@
 
                     var p = Phaser.Geom.Circle.CircumferencePoint(circle, Phaser.Math.DegToRad(a));
 
-                    graphics.lineTo(p.x, p.y); //crea las líneas de radio
+                    graphics.lineTo(p.x, p.y); //crea las líneas de radio // no necesario
 
                     var lp = Phaser.Geom.Circle.CircumferencePoint(labelCircle, Phaser.Math.DegToRad(a));
 
@@ -150,7 +150,7 @@
                 //distance = Phaser.Math.Distance.Between(400, 300,20,20);
                 //arrow = this.add.sprite(800, 600, 'arrow').setOrigin(80, 100);
                 //arrow.anchor.setTo(10);
-                var bullet = arrow.getFirstDead();
+                var bullet = arrow.getFirstDead();  
 
                 bullet.reset(sprite.x - 8, sprite.y - 8);
 
@@ -162,10 +162,10 @@
                 //arrow.angle += 0.2; //gira el ángulo
 
                 //escribe texto blanco sobre rotación
-                text.setText([
-                    'Sprite Rotation',
-                    'Angle: ' + arrow.angle.toFixed(2),
-                    'Rotation: ' + arrow.rotation.toFixed(2)
+                text.setText([                                  
+                    'Sprite Rotation',                          
+                    'Angle: ' + arrow.angle.toFixed(2),         
+                    'Rotation: ' + arrow.rotation.toFixed(2)    
                 ]);
 
                 //estos dos if se podrían convertir en uno
@@ -195,4 +195,3 @@
         </script>
     </body>
 </html>
-
