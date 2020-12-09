@@ -121,6 +121,8 @@
             var pmx = 1270;                             //posición bola 8
             var pmy = 654;                              //posición bola 8
             
+            var labelUser1; //letras de jugador 1
+            var labelUser2; //letras de jugador 2
             var label;  //letras de turno
 
             var activeGyroscope = true;
@@ -142,6 +144,16 @@
                 //temp captura flechas teclado
                 cursors = this.input.keyboard.createCursorKeys();
                 //fin temp captura flechas teclado
+
+                //temp escribe nombre del usuario 
+                var labelStyleUser1 = { font: "48px courier", fill: "#FFF", align: "center" };
+                labelUser1 = this.add.text(332, 140, (new URLSearchParams(window.location.search)).get('player1Name'), labelStyleUser1).setOrigin(0.5);
+                //fin de temp escribe nombre del usuario
+
+                //temp escribe nombre del usuario 
+                var labelStyleUser2 = { font: "48px courier", fill: "#FFF", align: "center" };
+                labelUser2 = this.add.text(1540, 140, (new URLSearchParams(window.location.search)).get('player2Name'), labelStyleUser2).setOrigin(0.5);
+                //fin de temp escribe nombre del usuario
 
                 //temp escribe letras del orden de tiro
                 var labelStyle = { font: "72px courier", fill: "#FFF", align: "center" };
@@ -295,7 +307,8 @@
                 aBola15 = this.physics.add.image(0, 0, 'ball15');        aBola15.disableBody(true, true);        bolasRayadas[6]=new Bola(15, "rayada", aBola15);
             
                 //asignando turno de tiro
-                turnoDeJugador = Math.floor(Math.random() * 2) + 1; 
+                turnoDeJugador = Math.floor(Math.random() * 2) + 1;
+                //alert(turnoDeJugador);
 
             }
 
@@ -346,11 +359,15 @@
 
             //valida cuando se mete la bola blanca, debe cambiar de turno y habilitar bola en mano
             function validarBolaBlanca(){       //N
+                console.log("validando bola blanca");
+                console.log("insertedBalls size: "+insertedBalls.length);
                 for(i=0; i<insertedBalls.length; i++){
                     if(insertedBalls[i].getNumeroDeBola() == 0){
-                        console.log("validarBolaBlanca");
+                        console.log("bola blanca insertada detected");
                         //console.log("cambiar el turno así se haya metido una bola del tipo asignado");
                         mantenerTurno = false;
+
+                        //validar que cuando se mete la bola blanca, cuando no se ha metido la bola 8, se termina el juego
                         if(turnoDeJugador==1 && bolasPendientesJugador1<=0)
                             alert("El ganador es el jugador 2");
                         if(turnoDeJugador==2 && bolasPendientesJugador2<=0)
@@ -359,6 +376,7 @@
                         console.log("habilitar bola en mano");
                         
                         insertedBalls[i].getBola().enableBody(true, 654, 654, true, true);
+                        //alert("bola reubicada");
                         return true;
                     }
                 }
@@ -367,6 +385,7 @@
 
             function validarBolasMetidas(){//aca2
                 console.log("validarBolasMetidas");
+                //alert("bolas metidas: "+insertedBalls.length);
                 //validando qe el arreglo no esté vacío
                 if(insertedBalls == null || insertedBalls.length == 0){
                     return;
@@ -421,7 +440,7 @@
                                         console.log("bolasPendientesJugador1: "+bolasPendientesJugador1+", bolasPendientesJugador2: "+bolasPendientesJugador2);
                                     }else{
                                         //se muestra la bola en la barra de bolas pendientes si aún no se ha insertado
-                                        arregloBolasJugador1[j].getBola().enableBody(true, (j+8)*36     , 130, true, true);
+                                        arregloBolasJugador1[j].getBola().enableBody(true, (j+8)*36     , 200, true, true);
                                     }                                    
                                     
                                     if(arregloDeBolasCompleto[arregloBolasJugador2[j].getNumeroDeBola()].getOnTable()==false){
@@ -433,7 +452,7 @@
                                         console.log("bolasPendientesJugador2: "+bolasPendientesJugador2+", bolasPendientesJugador1: "+bolasPendientesJugador1);
                                     }else{
                                         //se muestra la bola en la barra de bolas pendientes si aún no se ha insertado
-                                        arregloBolasJugador2[j].getBola().enableBody(true, 1380+(j+1)*36, 130, true, true);
+                                        arregloBolasJugador2[j].getBola().enableBody(true, 1380+(j+1)*36, 200, true, true);
                                     }
                                         
                                 }
@@ -501,7 +520,7 @@
                                         bolasPendientesJugador1--;
                                         console.log("bolasPendientesJugador1: "+bolasPendientesJugador1+", bolasPendientesJugador2: "+bolasPendientesJugador2);
                                     }else{
-                                        arregloBolasJugador1[j].getBola().enableBody(true, (j+8)*36     , 130, true, true);
+                                        arregloBolasJugador1[j].getBola().enableBody(true, (j+8)*36     , 200, true, true);
                                     }
                                     
                                     
@@ -512,7 +531,7 @@
                                         bolasPendientesJugador2--;
                                         console.log("bolasPendientesJugador2: "+bolasPendientesJugador2+", bolasPendientesJugador1: "+bolasPendientesJugador1);
                                     }else{
-                                        arregloBolasJugador2[j].getBola().enableBody(true, 1380+(j+1)*36, 130, true, true);
+                                        arregloBolasJugador2[j].getBola().enableBody(true, 1380+(j+1)*36, 200, true, true);
                                     }
                                 }
                                 return;
@@ -570,7 +589,8 @@
                 for(var i=0; i<arregloDeBolasCompleto.length; i++){
                     arregloDeBolasCompleto[i].getBola().setFriction(0.8, 0.8);
                 }
-                                    
+//aqi                                   
+ 
                 bolasParadas = 0;
                 for(i=0; i<=15; i++){
                     if(arregloDeBolasCompleto[i].getBola().body.velocity.x<1.5 && arregloDeBolasCompleto[i].getBola().body.velocity.x>-1.5 && arregloDeBolasCompleto[i].getBola().body.velocity.y<1.5 && arregloDeBolasCompleto[i].getBola().body.velocity.y>-1.5){
@@ -579,12 +599,12 @@
                 }
                 
                 if(escucharBolaEnMano == true){
-                    console.log("escuchando...");
+                    console.log("escuchando bola en mano...");
                     var movimientoCapturado = cursor.split(":");
                     
                     arregloDeBolasCompleto[0].getBola().setVelocity(0);
                     
-                    console.log("bolas paradas: "+bolasParadas+" | velocidad: "+arregloDeBolasCompleto[0].getBola().body.velocity.x);
+                    //console.log("bolas paradas: "+bolasParadas+" | velocidad: "+arregloDeBolasCompleto[0].getBola().body.velocity.x);
 
                     if(cursor.includes("RIGHT") || cursors.right.isDown){
                         arregloDeBolasCompleto[0].getBola().setVelocityX(200);
@@ -621,7 +641,7 @@
                     }
                 }
 
-                if(escucharTaco == true){
+                if(escucharTaco == true && escucharBolaEnMano == false){
                     cue.setVisible(true);
                     console.log("escuchando taco... ");
                     cue.x=arregloDeBolasCompleto[0].getBola().x;
@@ -648,6 +668,7 @@
                         isBallReadyToShoot = false;
                         escucharTaco = false;
                         cue.setVisible(false);
+                        return;
                     }
                 }
                 
@@ -656,9 +677,10 @@
                     
                     if(isNewShoot == true){
                         if(isNewOpeningShoot == true){
-                            console.log("habilitando bola en mano dentro de la sección 1/4 parte de la mesa");
+                            //console.log("habilitando bola en mano dentro de la sección 1/4 parte de la mesa");
                             this.physics.add.collider(arregloDeBolasCompleto[0].getBola(), temporalDividerPlatform);//choquessss
                             escucharBolaEnMano = true;
+                            //isNewOpeningShoot = false; //
                         }
                         if(isNewOpeningShoot == false && faltaPorBolaBlanca == true){
                             console.log("habilitando bola en mano para que se mueva dentro de toda la mesa");
@@ -674,15 +696,22 @@
                         }
                     }
 
+                    console.log("escucharBolaEnMano: "+escucharBolaEnMano+" | escucharTaco: "+escucharTaco);
+
                     if(isNewShoot == false && escucharBolaEnMano == false && escucharTaco == false){
+                        console.log("realizando validaciones");
                         console.log("monitorear movimiento de bolas");
-                        validarBolasMetidas();
                         faltaPorBolaBlanca = validarBolaBlanca();
+                        validarBolasMetidas();
+                        //validaciones!!!
                         if(faltaPorBolaBlanca == false){
                             isBallReadyToShoot = true;
+                        }else{  //
+                            mantenerTurno = false;
+                            escucharBolaEnMano = true;
                         }
                         bolasParadas = 0;
-                        if(turnoDeJugador == 1){
+                        if(turnoDeJugador == 1){//cond
                             if(mantenerTurno == false)
                                 turnoDeJugador = 2;
                         }else{
@@ -841,7 +870,7 @@
     </head>
 
     <body>
-
+        <!--
         <div class="space-block"></div>
 
         <table width="100%">
@@ -872,6 +901,12 @@
                 </td>
             </tr>
         </table>
-
-    </body>
+        <script>/*
+            var urlParams = new URLSearchParams(window.location.search);
+            document.getElementById("lblUser1Id").innerHTML = urlParams.get('player1Name');
+            alert((new URLSearchParams(window.location.search)).get('player1Name'));
+            alert(""+nombreDeJugador1);
+        */</script>
+        -->
+    </body>    
 </html>
