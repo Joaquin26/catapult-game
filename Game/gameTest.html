@@ -87,6 +87,8 @@
                 this.load.image('ball13', 'https://i.ibb.co/QJVppGw/ball13.png');
                 this.load.image('ball14', 'https://i.ibb.co/S3kZbvc/ball14.png');
                 this.load.image('ball15', 'https://i.ibb.co/smRXSyY/ball15.png');
+
+                this.load.image('touchingPoint', 'https://i.ibb.co/59VVH8J/touching-Point1x1.png');
             }
 
             var bolaBlanca, bola1, bola2, bola3, bola4, bola5, bola6, bola7, bola8, bola9, bola10, bola11, bola12, bola13, bola14, bola15;
@@ -194,7 +196,7 @@
                 temporalDividerPlatform = this.physics.add.staticImage(677, 650, 'vSolidExt');
                 //temporalDividerPlatform.create();
 
-                cue = this.add.sprite(654, 655, 'cue').setOrigin(0, 0.5);
+                cue = this.add.sprite(654, 655, 'cue').setOrigin(-0.12, 0.5);   //(0, 0.5);
                 //cue = this.physics.add.image(654, 655, 'cue');
                 cue.angle = -180;   //la imagen original está de derecha a izquierda, corregir y borrar esta línea
                 cue.setVisible(false);
@@ -580,22 +582,31 @@
                 label.setText(turnoDeJugador);
                                 
                 for(var i=0; i<arregloDeBolasCompleto.length; i++){
-                    arregloDeBolasCompleto[i].getBola().setVelocity(arregloDeBolasCompleto[i].getBola().body.velocity.x*0.992, arregloDeBolasCompleto[i].getBola().body.velocity.y*0.992);    
-                    
-                    //if(Math.abs(arregloDeBolasCompleto[i].getBola().body.velocity.x)<25 && Math.abs(arregloDeBolasCompleto[i].getBola().body.velocity.y)<25)
-                    //    arregloDeBolasCompleto[i].getBola().setVelocity(arregloDeBolasCompleto[i].getBola().body.velocity.x*0.8, arregloDeBolasCompleto[i].getBola().body.velocity.y*0.8);
+                    if(Math.abs(arregloDeBolasCompleto[i].getBola().body.velocity.x)<25 && Math.abs(arregloDeBolasCompleto[i].getBola().body.velocity.y)<25)
+                        arregloDeBolasCompleto[i].getBola().setVelocity(arregloDeBolasCompleto[i].getBola().body.velocity.x*0.8, arregloDeBolasCompleto[i].getBola().body.velocity.y*0.8);
+                    else
+                        arregloDeBolasCompleto[i].getBola().setVelocity(arregloDeBolasCompleto[i].getBola().body.velocity.x*0.992, arregloDeBolasCompleto[i].getBola().body.velocity.y*0.992);
                 }
 
                 for(var i=0; i<arregloDeBolasCompleto.length; i++){
                     arregloDeBolasCompleto[i].getBola().setFriction(0.8, 0.8);
                 }
-//aqi                                   
  
                 bolasParadas = 0;
+                console.log("contabilizando bolas paradas");
                 for(i=0; i<=15; i++){
+                    if(i==0)
+                        console.log("bola blanca x: "+arregloDeBolasCompleto[i].getBola().body.velocity.x+" y: "+arregloDeBolasCompleto[i].getBola().body.velocity.y);
+                    /*
+                    if(arregloDeBolasCompleto[i].getBola().body.velocity.x==0 && arregloDeBolasCompleto[i].getBola().body.velocity.x>-1.5 && arregloDeBolasCompleto[i].getBola().body.velocity.y<1.5 && arregloDeBolasCompleto[i].getBola().body.velocity.y==0){
+                        bolasParadas++;
+                    }
+                    */
+                    
                     if(arregloDeBolasCompleto[i].getBola().body.velocity.x<1.5 && arregloDeBolasCompleto[i].getBola().body.velocity.x>-1.5 && arregloDeBolasCompleto[i].getBola().body.velocity.y<1.5 && arregloDeBolasCompleto[i].getBola().body.velocity.y>-1.5){
                         bolasParadas++;
                     }
+                    
                 }
                 
                 if(escucharBolaEnMano == true){
@@ -642,10 +653,12 @@
                 }
 
                 if(escucharTaco == true && escucharBolaEnMano == false){
+
                     cue.setVisible(true);
                     console.log("escuchando taco... ");
                     cue.x=arregloDeBolasCompleto[0].getBola().x;
                     cue.y=arregloDeBolasCompleto[0].getBola().y;
+                    
                     if(cursor.includes("GyroscopeXLEFT") || cursors.left.isDown){
                         var movimientoCapturado = cursor.split(":");
                         if(movimientoCapturado < 2){
@@ -663,22 +676,62 @@
                     }
 
                     if(cursors.up.isDown){
-                        arregloDeBolasCompleto[0].getBola().setVelocity(1500,0);
+                        console.log("keyboard Down");
+                        
+                        /*
+                        var timer = this.time.addEvent({
+                            delay: 80,                // ms
+                            callback: testFunction,
+                            callbackScope: this,
+                            loop: false
+                        });
+                        */
+
                         arregloDeBolasCompleto[0].getBola().setBounce(1, 1);
+                        
+                        touchingPoint = this.physics.add.image(cue.x + (50 * Math.cos(cue.rotation)), cue.y + (50 * Math.sin(cue.rotation)), 'touchingPoint');
+                        this.physics.add.collider(touchingPoint,arregloDeBolasCompleto[0].getBola());
+
+                        if(Math.abs(cue.angle)==180 || Math.abs(cue.angle)==0)
+                            this.physics.accelerateToObject(touchingPoint, arregloDeBolasCompleto[0].getBola(), 3000);
+                        else
+                            this.physics.moveToObject(touchingPoint, arregloDeBolasCompleto[0].getBola(), 1000);
+                        
+                        touchingPoint.setVisible(false);
+
+                        this.physics.add.overlap(touchingPoint, arregloDeBolasCompleto[0].getBola(), touchingPointAndWhiteBallCollided, null, this);
+
+                        console.log("creado");
+                        
+                        cue.x += Math.abs(50 * Math.cos(cue.rotation));
+                        cue.y -= Math.abs(50 * Math.sin(cue.rotation));
+                        cue.setVisible(false);
+
+                        cursors.up.isDown = false;
+
                         isBallReadyToShoot = false;
                         escucharTaco = false;
-                        cue.setVisible(false);
+
                         return;
+                    }
+
+                    function touchingPointAndWhiteBallCollided(){
+                        if(typeof touchingPoint !== 'undefined'){
+                            touchingPoint.disableBody(true, true);
+                            delete touchingPoint;
+                            alert("eliminado");
+                        }    
                     }
                 }
                 
-                if(bolasParadas>=16){ //descomentar
+                if(bolasParadas>=16){
+                    
                     console.log("bolas paradas, isNewOpeningShoot: "+isNewOpeningShoot+ " | isNewShoot: "+isNewShoot);
                     
                     if(isNewShoot == true){
                         if(isNewOpeningShoot == true){
                             //console.log("habilitando bola en mano dentro de la sección 1/4 parte de la mesa");
-                            this.physics.add.collider(arregloDeBolasCompleto[0].getBola(), temporalDividerPlatform);//choquessss
+                            this.physics.add.collider(arregloDeBolasCompleto[0].getBola(), temporalDividerPlatform);//choques
                             escucharBolaEnMano = true;
                             //isNewOpeningShoot = false; //
                         }
@@ -699,10 +752,13 @@
                     console.log("escucharBolaEnMano: "+escucharBolaEnMano+" | escucharTaco: "+escucharTaco);
 
                     if(isNewShoot == false && escucharBolaEnMano == false && escucharTaco == false){
+                        //alert(isNewOpeningShoot);
+                        //alert("bolas paradas");
                         console.log("realizando validaciones");
                         console.log("monitorear movimiento de bolas");
                         faltaPorBolaBlanca = validarBolaBlanca();
                         validarBolasMetidas();
+                        //alert(faltaPorBolaBlanca);
                         //validaciones!!!
                         if(faltaPorBolaBlanca == false){
                             isBallReadyToShoot = true;
@@ -718,12 +774,16 @@
                             if(mantenerTurno == false)
                                 turnoDeJugador = 1;
                         }
+                        alert("turno cambiado");
                         mantenerTurno = false;
                         isNewShoot = true;
                         isNewOpeningShoot = false;
 
                         console.log("turno: "+turnoDeJugador);
                     }
+
+                    if(!isNewOpeningShoot)
+                        alert("bolas paradas");
                 }
             }
 
