@@ -1,972 +1,290 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8" />
-        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-        <title>GAME</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <script type="text/javascript" src="../Logic/jquery-1.11.0.min.js"></script>
-        <script src="Phaser/phaser.min.js"></script>
-        <link rel="stylesheet" href="../CSS/style.css" />
-        <script type="text/javascript" src="qrcode.js"></script>
-        <script src="../Logic/connect.js"></script>
-        <!--QR-->
-        <link rel="stylesheet" type="text/css" href="style.css">
 
-        <script type="text/javascript">
-            var webSocket = {};
-            var obj;
-            var element;
-            var cursor = "";
-            var audio = new Audio("../Assets/music/intro_sfx.mp3");
-            audio.addEventListener(
-                'ended', 
-                function () {
-                    this.currentTime = 0;
-                    this.play();
-                },
-                false);
-            //audio.play();
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>GAME</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script type="text/javascript" src="../Logic/jquery-1.11.0.min.js"></script>
+    <script src="Phaser/phaser.min.js"></script>
+    <link rel="stylesheet" href="../CSS/style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.10/lodash.min.js"></script>
+    <script type="text/javascript" src="qrcode.js"></script>
+    <script src="../Logic/connect.js"></script>
+    <!--QR-->
+    <link rel="stylesheet" type="text/css" href="style.css">
 
-            var config = {
-                type: Phaser.AUTO,
-                width: 1920,
-                height: 1080,
-                parent: "container",
-                type: Phaser.AUTO,
-                //transparent: true,
-                //backgroundColor: '#006400',
-                //parent: 'phaser-example',
-                physics: {
-                    default: 'arcade',
-                    arcade: {
-                        //gravity: { y: 300 },
-                        //debug: false
-                        enableSleeping: true,
-                        debug: true,
-                        gravity: {
-                            y: 0
-                        }
+    <script type="text/javascript">
+        var webSocket = {};
+        var obj;
+        var element;
+        var cursor = "";
+        var audio = new Audio("../Assets/music/intro_sfx.mp3");
+        audio.addEventListener(
+            'ended',
+            function () {
+                this.currentTime = 0;
+                this.play();
+            },
+            false);
+
+        var config = {
+            type: Phaser.AUTO,
+            width: 1920,
+            height: 1080,
+            parent: "container",
+            type: Phaser.AUTO,
+            physics: {
+                default: 'arcade',
+                arcade: {
+                    enableSleeping: true,
+                    debug: true,
+                    gravity: {
+                        y: 0
                     }
-                },
-                scene: {
-                    preload: preload,
-                    create: create,
-                    update: update
                 }
+            },
+            scene: {
+                preload: preload,
+                create: create,
+                update: update
             }
-            var game = new Phaser.Game(config);
-            
-            function preload ()
+        }
+        var game = new Phaser.Game(config);
+
+        function preload() {
+            //newGame
+            this.load.image('catapult',
+                "https://media.discordapp.net/attachments/690694542550106222/847898453929361418/catapult-1-removebg-preview.png"
+            )
+
+            this.load.image('enemy',
+                "https://media.discordapp.net/attachments/690694542550106222/847981535768215562/84-840679_blue-flame-boss-pixel-art-enemy-png-clipart.png"
+            )
+
+            this.load.image('stone-ball',
+                "https://media.discordapp.net/attachments/690694542550106222/848172996673011712/stone-ball.png");
+
+            this.load.image('table',
+                'https://media.discordapp.net/attachments/690694542550106222/847922676056326154/planemap.png');
+
+        }
+
+        function release() {}
+
+        var hp;
+        var bar;
+
+        var position = 0;
+
+        const laneSize = 240;
+        var isMoving = false;
+        var isPointing = false
+        var isReadyToShoot = true;
+        var text;
+        var timedEvent;
+        var gameTime = 60;
+        var remainingEnemies = 3;
+
+        //Sprites
+        var catapult;
+        var stoneBall;
+
+        class HealthBar {
+            constructor(scene, x, y, longitude, altitude) //new HealthBar(this, 120, 200, 300) //longitude
             {
-
-                this.load.image('table', 'https://i.ibb.co/L5p4XPN/table1920x1080.png');
-
-                //test
-                this.load.image('hsolid', 'https://i.ibb.co/B26tqkP/h-Transparent-Solid.png');
-                this.load.image('vsolid', 'https://i.ibb.co/mN8WXRv/v-Transparent-Solid.png');
-                this.load.image('hSolidExt', 'https://i.ibb.co/xFw2jmw/h-Transparent-Solid-Ext.png');
-                this.load.image('vSolidExt', 'https://i.ibb.co/DVbq9Bq/v-Transparent-Solid-Ext.png');
-                this.load.image('holeBig', 'https://i.ibb.co/4sKzxgT/hole-Corner.png');
-                
-                this.load.image('cue', 'https://i.ibb.co/pW7Vr0b/taco-Madera-Dibujo-Punta-Delgada300x10.png');//wwun
-                
-                this.load.image('whiteBall', 'https://i.ibb.co/VQ7XwLG/white-Ball.png');
-                this.load.image('ball01', 'https://i.ibb.co/PMz49w2/ball01.png');
-                this.load.image('ball02', 'https://i.ibb.co/mNtFs3m/ball02.png');
-                this.load.image('ball03', 'https://i.ibb.co/yXDNntF/ball03.png');
-                this.load.image('ball04', 'https://i.ibb.co/3h6jyDN/ball04.png');
-                this.load.image('ball05', 'https://i.ibb.co/rZygsTM/ball05.png');
-                this.load.image('ball06', 'https://i.ibb.co/1zny081/ball06.png');
-                this.load.image('ball07', 'https://i.ibb.co/R6QvC8K/ball07.png');
-                this.load.image('ball08', 'https://i.ibb.co/10yyQWm/ball08.png');
-                this.load.image('ball09', 'https://i.ibb.co/3zk1jfh/ball09.png');
-                this.load.image('ball10', 'https://i.ibb.co/C90QqfX/ball10.png');
-                this.load.image('ball11', 'https://i.ibb.co/BLssSRx/ball11.png');
-                this.load.image('ball12', 'https://i.ibb.co/vmbYCCR/ball12.png');
-                this.load.image('ball13', 'https://i.ibb.co/QJVppGw/ball13.png');
-                this.load.image('ball14', 'https://i.ibb.co/S3kZbvc/ball14.png');
-                this.load.image('ball15', 'https://i.ibb.co/smRXSyY/ball15.png');
-
-                this.load.image('touchingPoint', 'https://i.ibb.co/59VVH8J/touching-Point1x1.png');
+                this.bar = new Phaser.GameObjects.Graphics(scene);
+                this.x = x;
+                this.y = y;
+                this.value = 0;
+                this.p = 76 / 100;
+                this.longitude = longitude;
+                this.altitude = altitude;
+                this.draw();
+                scene.add.existing(this.bar);
             }
 
-            var bolaBlanca, bola1, bola2, bola3, bola4, bola5, bola6, bola7, bola8, bola9, bola10, bola11, bola12, bola13, bola14, bola15;
-            var aBola1, aBola2, aBola3, aBola4, aBola5, aBola6, aBola7, aBola9, aBola10, aBola11, aBola12, aBola13, aBola14, aBola15;
-            var arregloDeBolasCompleto;
-            var isNewOpeningShoot = true;
-            var isAssignedBalls = false;
-            var mantenerTurno = false;
-            var cue;
-
-            var posX = [], posY = [];                   //arreglo de posiciones iniciales
-            var arregloAleatorio = [];                  //arreglo para ordenamiento inicial
-
-            var insertedBalls = [];
-
-            var arregloBolasJugador1 = [];
-            var arregloBolasJugador2 = [];
-
-            var tipoDeBolaJugador1 = "";
-            var tipoDeBolaJugador2 = "";
-
-            var bolasPendientesJugador1 = 7;
-            var bolasPendientesJugador2 = 7;
-
-            //esto debe ser aleatorio
-            var turnoDeJugador = 0;
-
-            var bolasRayadas = [];
-            var bolasSolidas = [];
-
-            var radianAngle = 30 * (Math.PI / 180);     //ángulo ordenamiento inicial
-            var pmx = 1270;                             //posición bola 8
-            var pmy = 654;                              //posición bola 8
-            
-            var labelUser1; //letras de jugador 1
-            var labelUser2; //letras de jugador 2
-            var label;  //letras de turno
-
-            var activeGyroscope = true;
-
-            var isBallReadyToShoot = false;
-
-            var isNewShoot = true;
-
-            var escucharBolaEnMano = true;
-
-            var faltaPorBolaBlanca = false;
-
-            var temporalDividerPlatform;
-
-            var escucharTaco = false;
-
-            function create ()
-            {
-                //temp captura flechas teclado
-                cursors = this.input.keyboard.createCursorKeys();
-                //fin temp captura flechas teclado
-
-                //temp escribe nombre del usuario 
-                var labelStyleUser1 = { font: "48px courier", fill: "#FFF", align: "center" };
-                labelUser1 = this.add.text(332, 140, (new URLSearchParams(window.location.search)).get('player1Name'), labelStyleUser1).setOrigin(0.5);
-                //fin de temp escribe nombre del usuario
-
-                //temp escribe nombre del usuario 
-                var labelStyleUser2 = { font: "48px courier", fill: "#FFF", align: "center" };
-                labelUser2 = this.add.text(1540, 140, (new URLSearchParams(window.location.search)).get('player2Name'), labelStyleUser2).setOrigin(0.5);
-                //fin de temp escribe nombre del usuario
-
-                //temp escribe letras del orden de tiro
-                var labelStyle = { font: "72px courier", fill: "#FFF", align: "center" };
-                label = this.add.text(960, 140, turnoDeJugador, labelStyle).setOrigin(0.5);
-                //fin de temp escribw letras del orden de tiro
-                
-                arregloDeBolasCompleto = [bolaBlanca, bola1, bola2, bola3, bola4, bola5, bola6, bola7, bola8,
-                                            bola9, bola10, bola11, bola12, bola13, bola14, bola15];
-
-                bolasRayadas = [aBola1, aBola2, aBola3, aBola4, aBola5, aBola6, aBola7];
-                bolasRayadas = [aBola9, aBola10, aBola11, aBola12, aBola13, aBola14, aBola15];
-
-                this.add.image(960, 540, 'table');
-
-                //grupo de bandas de mesa
-                platforms = this.physics.add.staticGroup();
-                
-                platforms.create(656, 312, 'hsolid');
-                platforms.create(656, 992, 'hsolid');
-                platforms.create(1266, 312, 'hsolid');
-                platforms.create(1266, 992, 'hsolid');
-                platforms.create(314, 650, 'vsolid');
-                platforms.create(1604, 650, 'vsolid');
-                platforms.create(960, 278, 'hSolidExt');
-                platforms.create(960, 1028, 'hSolidExt');
-                platforms.create(280, 650, 'vSolidExt');
-                platforms.create(1638, 650, 'vSolidExt');
-                
-                //grupo de hoyos
-                holes = this.physics.add.staticGroup();
-                holes.create(345, 343, 'holeBig').setCircle(22.00);
-                holes.create(345, 997, 'holeBig').setCircle(22.00);
-                holes.create(1609, 343, 'holeBig').setCircle(22.00);
-                holes.create(1609, 997, 'holeBig').setCircle(22.00);
-                holes.create(986, 338, 'holeBig').setCircle(14.00);
-                holes.create(986, 1022, 'holeBig').setCircle(14.00);
-                
-                temporalDividerPlatform = this.physics.add.staticImage(677, 650, 'vSolidExt');
-                //temporalDividerPlatform.create();
-
-                cue = this.add.sprite(654, 655, 'cue').setOrigin(-0.12, 0.5);   //(0, 0.5);
-                //cue = this.physics.add.image(654, 655, 'cue');
-                cue.angle = -180;   //la imagen original está de derecha a izquierda, corregir y borrar esta línea
-                cue.setVisible(false);
-                
-                /*
-                setCircle(radius, offsetX, offsetY)
-                Sets this Body as using a circle, of the given radius, for all collision detection instead of a rectangle. The radius is given in pixels and is the distance from the center of the circle to the edge.
-                You can also control the x and y offset, which is the position of the Body relative to the top-left of the Sprite.
-                To change a Body back to being rectangular again call Body.setSize.
-                Note: Circular collision only happens with other Arcade Physics bodies, it does not work against tile maps, where rectangular collision is the only method supported.
-                */
-
-                //creando posiciones aleatorias para ubicar las bolas en el tiro inicial
-                arregloAleatorio = crearPosicionesAleatorio();
-                
-                //validando posición de extremos
-                arregloAleatorio = validarUbicacionDeExtremos(arregloAleatorio);
-                
-                //seteando posiciones iniciales en función de la posicón de la bola 8
-                ordenarBolas();
-                
-                bolaTest = this.physics.add.image(posX[0], posY[0], 'whiteBall');
-                arregloDeBolasCompleto[0] = new Bola(0, "blanca", bolaTest);
-                
-                bola1 = this.physics.add.image(posX[1], posY[1], 'ball01');
-                arregloDeBolasCompleto[1] = new Bola(1, "solida", bola1);
-                //
-                bola2 = this.physics.add.image(posX[2], posY[2], 'ball02');
-                arregloDeBolasCompleto[2] = new Bola(2, "solida", bola2);
-                
-                bola3 = this.physics.add.image(posX[3], posY[3], 'ball03');
-                arregloDeBolasCompleto[3] = new Bola(3, "solida", bola3);
-                //
-                bola4 = this.physics.add.image(posX[4], posY[4], 'ball04');
-                arregloDeBolasCompleto[4] = new Bola(4, "solida", bola4);
-                
-                bola5 = this.physics.add.image(posX[5], posY[5], 'ball05');
-                arregloDeBolasCompleto[5] = new Bola(5, "solida", bola5);
-                
-                bola6 = this.physics.add.image(posX[6], posY[6], 'ball06');
-                arregloDeBolasCompleto[6] = new Bola(6, "solida", bola6);
-                //
-                bola7 = this.physics.add.image(posX[7], posY[7], 'ball07');
-                arregloDeBolasCompleto[7] = new Bola(7, "solida", bola7);
-                
-                bola8 = this.physics.add.image(posX[8], posY[8], 'ball08');
-                arregloDeBolasCompleto[8] = new Bola(8, "negra", bola8);
-                
-                bola9 = this.physics.add.image(posX[9], posY[9], 'ball09');
-                arregloDeBolasCompleto[9] = new Bola(9, "rayada", bola9);
-                
-                bola10 = this.physics.add.image(posX[10], posY[10], 'ball10')
-                arregloDeBolasCompleto[10] = new Bola(10, "rayada", bola10);
-                //
-                bola11 = this.physics.add.image(posX[11], posY[11], 'ball11');
-                arregloDeBolasCompleto[11] = new Bola(11, "rayada", bola11);
-                
-                bola12 = this.physics.add.image(posX[12], posY[12], 'ball12');
-                arregloDeBolasCompleto[12] = new Bola(12, "rayada", bola12);
-                
-                bola13 = this.physics.add.image(posX[13], posY[13], 'ball13');
-                arregloDeBolasCompleto[13] = new Bola(13, "rayada", bola13);
-                
-                bola14 = this.physics.add.image(posX[14], posY[14], 'ball14');
-                arregloDeBolasCompleto[14] = new Bola(14, "rayada", bola14);
-                
-                bola15 = this.physics.add.image(posX[15], posY[15], 'ball15');
-                arregloDeBolasCompleto[15] = new Bola(15, "rayada", bola15);
-                
-                //agregando propiedades a las bolas: rebote, radio y límite para colisiones
-                for(i=0; i<=15; i++){
-                    arregloDeBolasCompleto[i].setOnTable(true); //no es necesario
-                    arregloDeBolasCompleto[i].getBola().setBounce(1,1); //setBounce(0.9, 0.9);
-                    arregloDeBolasCompleto[i].getBola().setCircle(18.00); //16.07
-                    arregloDeBolasCompleto[i].getBola().setCollideWorldBounds(true);
+            decrease(amount) {
+                this.value -= amount;
+                if (this.value < 0) {
+                    this.value = 0;
                 }
-
-                //agregando física de choques
-                for(i=0; i<15; i++){
-                    for(j= i+1; j<16; j++){
-                        this.physics.add.collider( arregloDeBolasCompleto[i].getBola(),arregloDeBolasCompleto[j].getBola());
-                    }
-                }
-                
-                //bounds
-                //crea las colisiones contra las bandas de la mesa
-                for(i=0; i<16; i++){
-                    this.physics.add.collider(arregloDeBolasCompleto[i].getBola(),platforms);
-                }
-                
-                //valida que todas las bolas colisionen contra los hoyos
-                for(i=0; i<16; i++){
-                    this.physics.add.overlap(arregloDeBolasCompleto[i].getBola(), holes, setInsertedOnHole);//, null, this);
-                }
-                
-                //bolas asignadas a cada jugador que apparecerán en la parte superior
-                aBola1  = this.physics.add.image(0, 0, 'ball01');        aBola1.disableBody(true, true);        bolasSolidas[0]=new Bola(1 , "solida", aBola1); 
-                aBola2  = this.physics.add.image(0, 0, 'ball02');        aBola2.disableBody(true, true);        bolasSolidas[1]=new Bola(2 , "solida", aBola2);
-                aBola3  = this.physics.add.image(0, 0, 'ball03');        aBola3.disableBody(true, true);        bolasSolidas[2]=new Bola(3 , "solida", aBola3);
-                aBola4  = this.physics.add.image(0, 0, 'ball04');        aBola4.disableBody(true, true);        bolasSolidas[3]=new Bola(4 , "solida", aBola4);
-                aBola5  = this.physics.add.image(0, 0, 'ball05');        aBola5.disableBody(true, true);        bolasSolidas[4]=new Bola(5 , "solida", aBola5);
-                aBola6  = this.physics.add.image(0, 0, 'ball06');        aBola6.disableBody(true, true);        bolasSolidas[5]=new Bola(6 , "solida", aBola6);
-                aBola7  = this.physics.add.image(0, 0, 'ball07');        aBola7.disableBody(true, true);        bolasSolidas[6]=new Bola(7 , "solida", aBola7);
-                aBola9  = this.physics.add.image(0, 0, 'ball09');        aBola9.disableBody(true, true);        bolasRayadas[0]=new Bola(9 , "rayada", aBola9);
-                aBola10 = this.physics.add.image(0, 0, 'ball10');        aBola10.disableBody(true, true);        bolasRayadas[1]=new Bola(10, "rayada", aBola10);
-                aBola11 = this.physics.add.image(0, 0, 'ball11');        aBola11.disableBody(true, true);        bolasRayadas[2]=new Bola(11, "rayada", aBola11);
-                aBola12 = this.physics.add.image(0, 0, 'ball12');        aBola12.disableBody(true, true);        bolasRayadas[3]=new Bola(12, "rayada", aBola12);
-                aBola13 = this.physics.add.image(0, 0, 'ball13');        aBola13.disableBody(true, true);        bolasRayadas[4]=new Bola(13, "rayada", aBola13);
-                aBola14 = this.physics.add.image(0, 0, 'ball14');        aBola14.disableBody(true, true);        bolasRayadas[5]=new Bola(14, "rayada", aBola14);
-                aBola15 = this.physics.add.image(0, 0, 'ball15');        aBola15.disableBody(true, true);        bolasRayadas[6]=new Bola(15, "rayada", aBola15);
-            
-                //asignando turno de tiro
-                turnoDeJugador = Math.floor(Math.random() * 2) + 1;
-                //alert(turnoDeJugador);
-
+                this.draw();
+                return (this.value === 0);
             }
 
-            //valida que las bolas se hayan insertado en los hoyos y almacena las insertadas
-            function setInsertedOnHole(bola, corner){
-                console.log("setInsertedOnHole");
-                for(i=0; i<arregloDeBolasCompleto.length; i++){
-                    if(arregloDeBolasCompleto != null){
-                        if(bola == arregloDeBolasCompleto[i].getBola()){
-                            //esta bola se valida aqí porqe es la única qe paraliza el juego
-                            if(validarBola8(arregloDeBolasCompleto[i])){//si se ha metido la bola 8, reiniciar tiro si es tiro inicial o terminar todo si ya había bolas asignadas
-                                return; //termina la función
-                            }
-                            arregloDeBolasCompleto[i].setOnTable(false);
-                            insertedBalls.push(arregloDeBolasCompleto[i]);
-                            arregloDeBolasCompleto[i].getBola().disableBody(true, true); //se deshabilita la bola de la mesa si se metió en el hoyo
-                        }
-                    }
+            setValue(amount) {
+                this.value = amount;
+                if (this.value < 0) {
+                    this.value = 0;
                 }
+                if (this.value > 20) { //30){   //valor máximo que se aceptará del acelerómetro
+                    this.value = 20; //30;
+                }
+
+                this.draw();
+                return (this.value === 0);
             }
 
-            //realiza todas las validaciones posibles cuando se mete la bola 8
-            function validarBola8(bola){  //big o: N
-                if(bola.getNumeroDeBola() == 8){
-                    console.log("validarBola8");
-                    if(isNewOpeningShoot == true){ //N2:    reordena todo en mesa
-                        insertedBalls = [];
-                        crearPosicionesAleatorio();
-                        validarUbicacionDeExtremos(arregloAleatorio);
-                        ordenarBolas(); //N2
-                        for(i=0; i<arregloDeBolasCompleto.length; i++){     //reubica las bolas
-                            arregloDeBolasCompleto[i].getBola().enableBody(true, posX[i], posY[i], true, true);
-                        }
-                        //borrar
-                    }else{//agregar validación si ya se ha metido todo
-                        for(var i=0; i<arregloDeBolasCompleto.length; i++){
-                            arregloDeBolasCompleto[i].getBola().disableBody(true, true);    //se desahbilita todo para terminar con la partida
-                        }
-                        //validando que se haya metido la bola negra antes de meter todas las asignadas
-                        if(turnoDeJugador==1 && bolasPendientesJugador1>0)
-                            alert("El ganador es el jugador 2");
-                        if(turnoDeJugador==2 && bolasPendientesJugador2>0)
-                            alert("El ganador es el jugador 1");
-                    }
-                    return true;
-                }
+            draw() {
+                this.bar.clear();
+                //  BG
+                this.bar.fillStyle(0xFFFFFF);
+                this.bar.fillRect(this.x, this.y, this.longitude, this.altitude); // (posX, posY, largo, alto)
+
+                this.bar.fillStyle(0xff0000);
+
+                var d = this.value * 37.5;
+                if (d >= this.altitude)
+                    d -= (4 * 2);
+
+                this.bar.fillRect(this.x + 4, (this.y + this.altitude - 4), this.longitude - (4 * 2), -
+                    d); //posX, posY, largo, alto
             }
 
-            //valida cuando se mete la bola blanca, debe cambiar de turno y habilitar bola en mano
-            function validarBolaBlanca(){       //N
-                console.log("validando bola blanca");
-                console.log("insertedBalls size: "+insertedBalls.length);
-                for(i=0; i<insertedBalls.length; i++){
-                    if(insertedBalls[i].getNumeroDeBola() == 0){
-                        console.log("bola blanca insertada detected");
-                        //console.log("cambiar el turno así se haya metido una bola del tipo asignado");
-                        mantenerTurno = false;
+            hideBar() {
+                this.bar.clear();
+            }
+        }
 
-                        //validar que cuando se mete la bola blanca, cuando no se ha metido la bola 8, se termina el juego
-                        if(turnoDeJugador==1 && bolasPendientesJugador1<=0)
-                            alert("El ganador es el jugador 2");
-                        if(turnoDeJugador==2 && bolasPendientesJugador2<=0)
-                            alert("El ganador es el jugador 1");
-                        
-                        console.log("habilitar bola en mano");
-                        
-                        insertedBalls[i].getBola().enableBody(true, 654, 654, true, true);
-                        //alert("bola reubicada");
-                        return true;
-                    }
-                }
-                return false;
+        function create() {
+
+            cursors = this.input.keyboard.createCursorKeys();
+
+            newMap = this.add.image(960, 540, 'table');
+            newMap.setScale(1.5);
+
+            enemies = this.physics.add.group();
+
+            enemy = enemies.create(720, 540, 'enemy')
+            enemy.setScale(0.20);
+            enemy.setBounce(0, 0);
+            enemy.setCollideWorldBounds(true);
+
+            enemy2 = enemies.create(960, 200, 'enemy');
+            enemy2.setScale(0.20);
+            enemy2.setBounce(0, 0);
+            enemy2.setCollideWorldBounds(true);
+
+            enemy3 = enemies.create(1200, 400, 'enemy');
+            enemy3.setScale(0.20);
+            enemy3.setBounce(0, 0);
+            enemy3.setCollideWorldBounds(true);
+
+
+            catapult = this.add.sprite(720, 970, 'catapult');
+            catapult.setScale(1.5);
+
+            stoneBallGroup = this.physics.add.group();
+            stoneBall = stoneBallGroup.create(720, 970, 'stone-ball');
+            stoneBall.setScale(0.2)
+            stoneBall.setVisible(false);
+            stoneBall.setBounce(0, 0);
+            stoneBall.setBounce(18.00);
+            stoneBall.setCollideWorldBounds(true);
+
+            this.physics.add.collider(enemies, stoneBallGroup, defeatEnemy);
+
+            text = this.add.text(32, 32);
+            timedEvent = this.time.delayedCall(gameTime * 1000, lose, [], this);
+
+            hp = new HealthBar(this, 120, 274, 60, 750);
+        }
+
+        function update() {
+            detectMotion(this.time);
+
+            //BOTON A
+            if (cursor.includes("BX") && isPointing && hp.value > 0)
+                shoot(this.time)
+
+            if (cursor.includes("BX") && !isPointing && isReadyToShoot)
+                isPointing = true;
+
+            if (isPointing && cursor.includes("AccelerometerY")) {
+                aceleracionCapturada = cursor.split(":");
+                if (aceleracionCapturada[1] > 20)
+                    aceleracionCapturada[1] = 20;
+
+                hp.setValue(aceleracionCapturada[1]);
             }
 
-            function validarBolasMetidas(){//aca2
-                console.log("validarBolasMetidas");
-                //alert("bolas metidas: "+insertedBalls.length);
-                //validando qe el arreglo no esté vacío
-                if(insertedBalls == null || insertedBalls.length == 0){
-                    return;
+            text.setText('Tiempo restante: ' + (gameTime - timedEvent.getProgress() * gameTime).toString().substr(0,
+                4));
+
+        }
+
+        function detectMotion(timer) {
+            if (!isMoving && !isPointing) {
+                if (cursor.includes("GyroscopeXLEFT")) {
+                    if (position > 0)
+                        position--;
+                    moveCatapult(timer);
+                }
+                if (cursor.includes("GyroscopeXRIGHT")) {
+                    if (position < 2)
+                        position++;
+                    moveCatapult(timer)
                 }
 
-                if(isNewOpeningShoot == true){
-                    //ya se ha hecho la desactivación mediante setOnTable igual false de las bolas del arreglo de bolas completo
-                    if(insertedBalls.length>0){
-                        mantenerTurno = true;
-                    }
-                    //temp verificando comportamiento
-                    isNewOpeningShoot = false;
-                    //fin temp verificando comportamiento
-                }else{
-                    if(turnoDeJugador == 1){    //validando el  turno del jugador para la asignación
-                        for(var i=0; i<insertedBalls.length; i++){
-                            if(isAssignedBalls == false && insertedBalls[i].getTipoDeBola() != "blanca"){
-                                
-                                //asignando tipos de bola
-                                if(insertedBalls[i].getTipoDeBola()=="solida"){
-                                    tipoDeBolaJugador1="solida";
-                                    tipoDeBolaJugador2="rayada";
-                                }else{
-                                    tipoDeBolaJugador1="rayada";
-                                    tipoDeBolaJugador2="solida";
-                                }
-
-                                //definiendo que las bolas han sido asignadas
-                                isAssignedBalls = true;
-                                mantenerTurno = true;
-
-                                //asigna todas las bolas al arreglo del jugador
-                                for(j=0; j<bolasSolidas.length; j++){
-                                    
-                                    //asigna el arreglo de cada tipo de bola a los jugadores
-                                    if(tipoDeBolaJugador1=="solida"){
-                                        arregloBolasJugador1[j] = bolasSolidas[j];
-                                        arregloBolasJugador2[j] = bolasRayadas[j];
-                                    }else{
-                                        arregloBolasJugador1[j] = bolasRayadas[j];
-                                        arregloBolasJugador2[j] = bolasSolidas[j];
-                                    }
-
-                                    //mostrando y ocultando las bolas de cada grupo
-                                    //aprovechando que el número de bola es el de su posición en el arreglo completo
-                                    if(arregloDeBolasCompleto[arregloBolasJugador1[j].getNumeroDeBola()].getOnTable()==false){//aca
-                                        arregloBolasJugador1[j].x = (j+8)*36;
-                                        arregloBolasJugador1[j].y = 130;
-                                        arregloBolasJugador1[j].getBola().disableBody(true, true);
-                                        bolasPendientesJugador1--;
-                                        //eliminar la siguiente línea
-                                        console.log("bolasPendientesJugador1: "+bolasPendientesJugador1+", bolasPendientesJugador2: "+bolasPendientesJugador2);
-                                    }else{
-                                        //se muestra la bola en la barra de bolas pendientes si aún no se ha insertado
-                                        arregloBolasJugador1[j].getBola().enableBody(true, (j+8)*36     , 200, true, true);
-                                    }                                    
-                                    
-                                    if(arregloDeBolasCompleto[arregloBolasJugador2[j].getNumeroDeBola()].getOnTable()==false){
-                                        arregloBolasJugador2[j].x = 1380+(j+1)*36;
-                                        arregloBolasJugador2[j].y = 130;
-                                        arregloBolasJugador2[j].getBola().disableBody(true, true);
-                                        bolasPendientesJugador2--;
-                                        //eliminar la siguiente línea
-                                        console.log("bolasPendientesJugador2: "+bolasPendientesJugador2+", bolasPendientesJugador1: "+bolasPendientesJugador1);
-                                    }else{
-                                        //se muestra la bola en la barra de bolas pendientes si aún no se ha insertado
-                                        arregloBolasJugador2[j].getBola().enableBody(true, 1380+(j+1)*36, 200, true, true);
-                                    }
-                                        
-                                }
-                                return;
-                            }//fin de asignación de bolas
-                            
-                            //aqí se hace la dessactivación de bolas ya insertadas cuando ya se hizo la asignación del grupo de bolas
-                            if(arregloBolasJugador1.length >= 0 && arregloBolasJugador2.length >= 0){
-                                //si ya se metió bolas del tipo asignado, desactivar
-                                console.log("tipo de bola asignada: "+tipoDeBolaJugador1+" | tipo de bola insertada: "+insertedBalls[i].getTipoDeBola()+" ("+insertedBalls[i].getNumeroDeBola()+")");
-                                for(var a=1; a<arregloBolasJugador1.length; a++){ //no valida la bola blanca
-                                    if(insertedBalls[i].getTipoDeBola()==tipoDeBolaJugador1){
-                                        mantenerTurno = true;
-                                    }
-                                    if(insertedBalls[i].getNumeroDeBola()==arregloBolasJugador1[a].getNumeroDeBola()){
-                                        arregloBolasJugador1[a].setOnTable(false);
-                                        arregloBolasJugador1[a].getBola().disableBody(true, true);
-                                        bolasPendientesJugador1--;
-                                        console.log("bolasPendientesJugador1: "+bolasPendientesJugador1+", bolasPendientesJugador2: "+bolasPendientesJugador2);
-                                        break;
-                                    }
-                                    if(insertedBalls[i].getNumeroDeBola()==arregloBolasJugador2[a].getNumeroDeBola()){
-                                        arregloBolasJugador2[a].setOnTable(false);
-                                        arregloBolasJugador2[a].getBola().disableBody(true, true);
-                                        bolasPendientesJugador2--;
-                                        console.log("bolasPendientesJugador2: "+bolasPendientesJugador2+", bolasPendientesJugador1: "+bolasPendientesJugador1);
-                                        break;
-                                    }
-                                }
-                            }
-                        }//fin for
-                    }//fin de turno de jugador 1
-                    
-                    if(turnoDeJugador == 2){    //validando el  turno del jugador para la asignación
-                        for(var i=0; i<insertedBalls.length; i++){
-                            if(isAssignedBalls == false && insertedBalls[i].getTipoDeBola() != "blanca"){
-                                
-                                if(insertedBalls[i].getTipoDeBola()=="solida"){
-                                    tipoDeBolaJugador2="solida";
-                                    tipoDeBolaJugador1="rayada";
-                                }else{
-                                    tipoDeBolaJugador2="rayada";
-                                    tipoDeBolaJugador1="solida";
-                                }
-
-                                isAssignedBalls = true;
-                                mantenerTurno = true;
-
-                                //asigna todas las bolas al arreglo del jugador
-                                for(var j=0; j<bolasSolidas.length; j++){
-                                    
-                                    if(tipoDeBolaJugador2=="solida"){
-                                        arregloBolasJugador1[j] = bolasRayadas[j];
-                                        arregloBolasJugador2[j] = bolasSolidas[j];
-                                    }else{
-                                        arregloBolasJugador1[j] = bolasSolidas[j];
-                                        arregloBolasJugador2[j] = bolasRayadas[j];
-                                    }
-
-                                    //aprovechando que el número de bola es el de su posición en el arreglo completo
-                                    if(arregloDeBolasCompleto[arregloBolasJugador1[j].getNumeroDeBola()].getOnTable()==false){//aca
-                                        arregloBolasJugador1[j].x = (j+8)*36;
-                                        arregloBolasJugador1[j].y = 130;
-                                        arregloBolasJugador1[j].getBola().disableBody(true, true);
-                                        bolasPendientesJugador1--;
-                                        console.log("bolasPendientesJugador1: "+bolasPendientesJugador1+", bolasPendientesJugador2: "+bolasPendientesJugador2);
-                                    }else{
-                                        arregloBolasJugador1[j].getBola().enableBody(true, (j+8)*36     , 200, true, true);
-                                    }
-                                    
-                                    
-                                    if(arregloDeBolasCompleto[arregloBolasJugador2[j].getNumeroDeBola()].getOnTable()==false){
-                                        arregloBolasJugador2[j].x = 1380+(j+1)*36;
-                                        arregloBolasJugador2[j].y = 130;
-                                        arregloBolasJugador2[j].getBola().disableBody(true, true);
-                                        bolasPendientesJugador2--;
-                                        console.log("bolasPendientesJugador2: "+bolasPendientesJugador2+", bolasPendientesJugador1: "+bolasPendientesJugador1);
-                                    }else{
-                                        arregloBolasJugador2[j].getBola().enableBody(true, 1380+(j+1)*36, 200, true, true);
-                                    }
-                                }
-                                return;
-                            }//fin de asignación de bolas
-                            
-                            if(arregloBolasJugador1.length >= 0 && arregloBolasJugador2.length >= 0){    //aqí se hace la dessactivación de bolas ya insertadas
-                                //si ya se metió bolas del tipo asignado, desactivar
-                                for(var a=0; a<arregloBolasJugador2.length; a++){
-                                    console.log("tipo de bola asignada: "+tipoDeBolaJugador2+" | tipo de bola insertada: "+insertedBalls[i].getTipoDeBola()+" ("+insertedBalls[i].getNumeroDeBola()+")");
-                                    if(insertedBalls[i].getTipoDeBola()==tipoDeBolaJugador2){
-                                        //console.log("tipo de bola asignada: "+tipoDeBolaJugador2+" | tipo de bola insertada: "+insertedBalls[i].getTipoDeBola()+" ("+insertedBalls[i].getNumeroDeBola()+")");
-                                        mantenerTurno = true;
-                                    }
-                                    if(insertedBalls[i].getNumeroDeBola()==arregloBolasJugador1[a].getNumeroDeBola()){
-                                        arregloBolasJugador1[a].setOnTable(false);
-                                        arregloBolasJugador1[a].getBola().disableBody(true, true);
-                                        bolasPendientesJugador1--;
-                                        //alert("bola desactivada: "+arregloBolasJugador1[a].getNumeroDeBola());
-                                        console.log("bolasPendientesJugador1: "+bolasPendientesJugador1+", bolasPendientesJugador2: "+bolasPendientesJugador2);
-                                        break;
-                                    }
-                                    if(insertedBalls[i].getNumeroDeBola()==arregloBolasJugador2[a].getNumeroDeBola()){
-                                        arregloBolasJugador2[a].setOnTable(false);
-                                        arregloBolasJugador2[a].getBola().disableBody(true, true);
-                                        bolasPendientesJugador2--;
-                                        //alert("bola desactivada: "+arregloBolasJugador2[a].getNumeroDeBola());
-                                        console.log("bolasPendientesJugador2: "+bolasPendientesJugador2+", bolasPendientesJugador1: "+bolasPendientesJugador1);
-                                        break;
-                                    }
-                                }
-                            }
-                        }//fin for
-                    }//fin de turno de jugador 2
-                }
-                //se quitan todos los elementos de las bolas insertadas
-                insertedBalls = [];
             }
+        }
 
-            //movimiento del taco
-            function cueMovement(angleAmount){
-                cue.angle += (0.8*Math.round(angleAmount));
-            }
+        function stopMoving() {
+            isMoving = false;
+        }
 
-            function update()
-            {
-                label.setText(turnoDeJugador);
-                                
-                for(var i=0; i<arregloDeBolasCompleto.length; i++){
-                    if(Math.abs(arregloDeBolasCompleto[i].getBola().body.velocity.x)<25 && Math.abs(arregloDeBolasCompleto[i].getBola().body.velocity.y)<25)
-                        arregloDeBolasCompleto[i].getBola().setVelocity(arregloDeBolasCompleto[i].getBola().body.velocity.x*0.8, arregloDeBolasCompleto[i].getBola().body.velocity.y*0.8);
-                    else
-                        arregloDeBolasCompleto[i].getBola().setVelocity(arregloDeBolasCompleto[i].getBola().body.velocity.x*0.992, arregloDeBolasCompleto[i].getBola().body.velocity.y*0.992);
-                }
+        function defeatEnemy(enemy, stoneBall) {
+            enemy.destroy(true);
+            remainingEnemies--;
+            win();
+        }
 
-                for(var i=0; i<arregloDeBolasCompleto.length; i++){
-                    arregloDeBolasCompleto[i].getBola().setFriction(0.8, 0.8);
-                }
- 
-                bolasParadas = 0;
-                console.log("contabilizando bolas paradas");
-                for(i=0; i<=15; i++){
-                    if(i==0)
-                        console.log("bola blanca x: "+arregloDeBolasCompleto[i].getBola().body.velocity.x+" y: "+arregloDeBolasCompleto[i].getBola().body.velocity.y);
-                    /*
-                    if(arregloDeBolasCompleto[i].getBola().body.velocity.x==0 && arregloDeBolasCompleto[i].getBola().body.velocity.x>-1.5 && arregloDeBolasCompleto[i].getBola().body.velocity.y<1.5 && arregloDeBolasCompleto[i].getBola().body.velocity.y==0){
-                        bolasParadas++;
-                    }
-                    */
-                    
-                    if(arregloDeBolasCompleto[i].getBola().body.velocity.x<1.5 && arregloDeBolasCompleto[i].getBola().body.velocity.x>-1.5 && arregloDeBolasCompleto[i].getBola().body.velocity.y<1.5 && arregloDeBolasCompleto[i].getBola().body.velocity.y>-1.5){
-                        bolasParadas++;
-                    }
-                    
-                }
-                
-                if(escucharBolaEnMano == true){
-                    console.log("escuchando bola en mano...");
-                    var movimientoCapturado = cursor.split(":");
-                    
-                    arregloDeBolasCompleto[0].getBola().setVelocity(0);
-                    
-                    //console.log("bolas paradas: "+bolasParadas+" | velocidad: "+arregloDeBolasCompleto[0].getBola().body.velocity.x);
+        function moveCatapult(timer) {
+            catapult.x = 720 + position * laneSize;
+            isMoving = true;
+            timer.addEvent({
+                delay: 500,
+                callback: stopMoving,
+                callbackScope: this,
+                loop: false
+            });
+        }
 
-                    if(cursor.includes("RIGHT") || cursors.right.isDown){
-                        arregloDeBolasCompleto[0].getBola().setVelocityX(200);
-                        arregloDeBolasCompleto[0].getBola().setBounce(0);
-                        for(var i=1; i<arregloDeBolasCompleto.length; i++){
-                            arregloDeBolasCompleto[i].getBola().body.setImmovable(true);
-                        }
-                        console.log("inside if() velocidad: "+arregloDeBolasCompleto[0].getBola().body.velocity.x);
-                    }
-                    
-                    if(cursor.includes("LEFT") || cursors.left.isDown){
-                        arregloDeBolasCompleto[0].getBola().setVelocityX(-200);
-                        arregloDeBolasCompleto[0].getBola().setBounce(0);
-                    }
-                        
-                    if(cursor.includes("UP") || cursors.up.isDown){
-                        arregloDeBolasCompleto[0].getBola().setVelocityY(-200);
-                        arregloDeBolasCompleto[0].getBola().setBounce(0);
-                    }
-                        
-                    if(cursor.includes("DOWN") || cursors.down.isDown){
-                        arregloDeBolasCompleto[0].getBola().setVelocityY(200);
-                        arregloDeBolasCompleto[0].getBola().setBounce(0);
-                    }
+        function shoot(timer) {
+            isPointing = false;
+            isReadyToShoot = false;
+            stoneBall.setVisible(true);
+            stoneBall.y = 720 - hp.value * 27;
+            stoneBall.x = catapult.x
+            timer.addEvent({
+                delay: 2000,
+                callback: shotCooldown,
+                callbackScope: this,
+                loop: false
+            });
+        }
 
-                    if(cursors.space.isDown){
-                        for(var i=1; i<arregloDeBolasCompleto.length; i++){
-                            arregloDeBolasCompleto[i].getBola().body.setImmovable(false);
-                        }
-                        isBallReadyToShoot = true;
-                        escucharBolaEnMano = false;
-                        if(temporalDividerPlatform.body.enable)
-                            temporalDividerPlatform.disableBody(true, true);
-                    }
-                }
+        function lose() {
+            if (remainingEnemies > 0)
+                alert("Perdiste")
+        }
 
-                if(escucharTaco == true && escucharBolaEnMano == false){
+        function win() {
+            if (remainingEnemies == 0)
+                alert("Ganaste")
+        }
 
-                    cue.setVisible(true);
-                    console.log("escuchando taco... ");
-                    cue.x=arregloDeBolasCompleto[0].getBola().x;
-                    cue.y=arregloDeBolasCompleto[0].getBola().y;
-                    
-                    if(cursor.includes("GyroscopeXLEFT") || cursors.left.isDown){
-                        var movimientoCapturado = cursor.split(":");
-                        if(movimientoCapturado < 2){
-                            movimientoCapturado[1] = 2.5;
-                        }
-                        cueMovement(movimientoCapturado[1]);
-                    }
+        function shotCooldown() {
+            hp.setValue(0);
+            stoneBall.setVisible(false);
+            isReadyToShoot = true;
+        }
+    </script>
+</head>
 
-                    if(cursor.includes("GyroscopeXRIGHT") || cursors.right.isDown){
-                        var movimientoCapturado = cursor.split(":");
-                        if(movimientoCapturado < 2){
-                            movimientoCapturado[1] = -2.5;
-                        }
-                        cueMovement(movimientoCapturado[1]);
-                    }
+<body>
+</body>
 
-                    if(cursors.up.isDown){
-                        console.log("keyboard Down");
-                        
-                        /*
-                        var timer = this.time.addEvent({
-                            delay: 80,                // ms
-                            callback: testFunction,
-                            callbackScope: this,
-                            loop: false
-                        });
-                        */
-
-                        arregloDeBolasCompleto[0].getBola().setBounce(1, 1);
-                        
-                        touchingPoint = this.physics.add.image(cue.x + (50 * Math.cos(cue.rotation)), cue.y + (50 * Math.sin(cue.rotation)), 'touchingPoint');
-                        this.physics.add.collider(touchingPoint,arregloDeBolasCompleto[0].getBola());
-
-                        if(Math.abs(cue.angle)==180 || Math.abs(cue.angle)==0)
-                            this.physics.accelerateToObject(touchingPoint, arregloDeBolasCompleto[0].getBola(), 3000);
-                        else
-                            this.physics.moveToObject(touchingPoint, arregloDeBolasCompleto[0].getBola(), 1000);
-                        
-                        touchingPoint.setVisible(false);
-
-                        this.physics.add.overlap(touchingPoint, arregloDeBolasCompleto[0].getBola(), touchingPointAndWhiteBallCollided, null, this);
-
-                        console.log("creado");
-                        
-                        cue.x += Math.abs(50 * Math.cos(cue.rotation));
-                        cue.y -= Math.abs(50 * Math.sin(cue.rotation));
-                        cue.setVisible(false);
-
-                        cursors.up.isDown = false;
-
-                        isBallReadyToShoot = false;
-                        escucharTaco = false;
-
-                        return;
-                    }
-
-                    function touchingPointAndWhiteBallCollided(){
-                        if(typeof touchingPoint !== 'undefined'){
-                            touchingPoint.disableBody(true, true);
-                            delete touchingPoint;
-                            alert("eliminado");
-                        }    
-                    }
-                }
-                
-                if(bolasParadas>=16){
-                    
-                    console.log("bolas paradas, isNewOpeningShoot: "+isNewOpeningShoot+ " | isNewShoot: "+isNewShoot);
-                    
-                    if(isNewShoot == true){
-                        if(isNewOpeningShoot == true){
-                            //console.log("habilitando bola en mano dentro de la sección 1/4 parte de la mesa");
-                            this.physics.add.collider(arregloDeBolasCompleto[0].getBola(), temporalDividerPlatform);//choques
-                            escucharBolaEnMano = true;
-                            //isNewOpeningShoot = false; //
-                        }
-                        if(isNewOpeningShoot == false && faltaPorBolaBlanca == true){
-                            console.log("habilitando bola en mano para que se mueva dentro de toda la mesa");
-                            escucharBolaEnMano = true;
-                        }
-                        
-                        //-----------------------------
-
-                        if(isBallReadyToShoot == true){
-                            console.log("habilitando escucha de taco");
-                            isNewShoot = false; //tiro nuevo queda deshabilitado porque la bola ya se ha ubicado
-                            escucharTaco = true;
-                        }
-                    }
-
-                    console.log("escucharBolaEnMano: "+escucharBolaEnMano+" | escucharTaco: "+escucharTaco);
-
-                    if(isNewShoot == false && escucharBolaEnMano == false && escucharTaco == false){
-                        //alert(isNewOpeningShoot);
-                        //alert("bolas paradas");
-                        console.log("realizando validaciones");
-                        console.log("monitorear movimiento de bolas");
-                        faltaPorBolaBlanca = validarBolaBlanca();
-                        validarBolasMetidas();
-                        //alert(faltaPorBolaBlanca);
-                        //validaciones!!!
-                        if(faltaPorBolaBlanca == false){
-                            isBallReadyToShoot = true;
-                        }else{  //
-                            mantenerTurno = false;
-                            escucharBolaEnMano = true;
-                        }
-                        bolasParadas = 0;
-                        if(turnoDeJugador == 1){//cond
-                            if(mantenerTurno == false)
-                                turnoDeJugador = 2;
-                        }else{
-                            if(mantenerTurno == false)
-                                turnoDeJugador = 1;
-                        }
-                        alert("turno cambiado");
-                        mantenerTurno = false;
-                        isNewShoot = true;
-                        isNewOpeningShoot = false;
-
-                        console.log("turno: "+turnoDeJugador);
-                    }
-
-                    if(!isNewOpeningShoot)
-                        alert("bolas paradas");
-                }
-            }
-
-            function crearPosicionesAleatorio(){        //crea las posiciones aleatorias y las ubica en un array
-                console.log("llamada crearPosicionesAleatorio");
-                var arregloAleatorioTmp = [];
-                var arregloAleatorioString = "random pos: ";
-
-                arregloAleatorioTmp[0] = 0;
-                arregloAleatorioTmp[1] = 1;
-                arregloAleatorioTmp[8] = 8;
-
-                for(i=0; i<=15; i++){   //creando valores aleatorios
-                    pos = Math.floor(Math.random() * 16);
-                    for(j=0; j<i; j++){ //buscando si existe el valor en el arreglo temporal
-                        if(arregloAleatorioTmp[j]==pos || pos==0 || pos==1 || pos==8){
-                            pos = Math.floor(Math.random() * 16);
-                            j=-1;
-                        }
-                    }                    
-                    if(i!=0 && i!=1 && i!=8){
-                        arregloAleatorioTmp[i] = pos;
-                    }
-                }
-
-                for(i=0; i<=15; i++){
-                    arregloAleatorioString += "["+arregloAleatorioTmp[i]+"]";
-                }
-                
-                console.log(arregloAleatorioString);
-                return arregloAleatorioTmp;
-            }
-
-            function validarUbicacionDeExtremos(arregloAleatorio){
-                console.log("llamada validarUbicacionDeExtremos");
-                var ubicacionDeExtremosString = "u. ext.";
-                var cambio=false;
-                if(arregloAleatorio[11]<8 && arregloAleatorio[15]<8){
-
-                    for(i=0; i<=15; i++){
-                        console.log("["+arregloAleatorio+"]");
-                    }
-
-                    for(i=2; i<=15; i++){
-                        if(arregloAleatorio[i]>8){
-                            var temp = arregloAleatorio[i];
-                            arregloAleatorio[i] = arregloAleatorio[15];
-                            arregloAleatorio[15] = temp;
-                            break;
-                        }
-                    }
-                    console.log("[11] : "+arregloAleatorio[11]);
-                    console.log("[15] : "+arregloAleatorio[15]);
-                    cambio=true;
-                }
-                if(arregloAleatorio[11]>8 && arregloAleatorio[15]>8){
-
-                    for(i=0; i<=15; i++){
-                        console.log("["+arregloAleatorio+"]");
-                    }
-
-                    for(i=2; i<=15; i++){
-                        if(arregloAleatorio[i]<8){
-                            var temp = arregloAleatorio[i];
-                            arregloAleatorio[i] = arregloAleatorio[15];
-                            arregloAleatorio[15] = temp;
-                            break;
-                        }
-                    }
-                    console.log("[11] : "+arregloAleatorio[11]);
-                    console.log("[15] : "+arregloAleatorio[15]);
-                    cambio=true;
-                }
-                if(cambio == true){
-                    for(i=0; i<=15; i++){
-                        ubicacionDeExtremosString += "["+arregloAleatorio[i]+"]";
-                    }
-                    console.log(ubicacionDeExtremosString);
-                }
-                return arregloAleatorio;
-            }
-
-            function ordenarBolas(){
-                posX[arregloAleatorio[0]] = 654;                                      posY[arregloAleatorio[0]] = 654;
-                posX[arregloAleatorio[1]] = pmx - (2 * 36 * Math.cos(radianAngle));   posY[arregloAleatorio[1]] = pmy;
-                posX[arregloAleatorio[2]] = pmx - (1 * 36 * Math.cos(radianAngle));   posY[arregloAleatorio[2]] = pmy - (36/2);
-                posX[arregloAleatorio[3]] = pmx - (1 * 36 * Math.cos(radianAngle));   posY[arregloAleatorio[3]] = pmy + (36/2);
-                posX[arregloAleatorio[4]] = pmx;                                      posY[arregloAleatorio[4]] = pmy - 36;
-                posX[arregloAleatorio[5]] = pmx;                                      posY[arregloAleatorio[5]] = pmy + 36;
-                posX[arregloAleatorio[6]] = pmx + (1 * 36 * Math.cos(radianAngle));   posY[arregloAleatorio[6]] = pmy - (3*36/2);
-                posX[arregloAleatorio[7]] = pmx + (1 * 36 * Math.cos(radianAngle));   posY[arregloAleatorio[7]] = pmy - (1*36/2);
-                posX[arregloAleatorio[8]] = pmx;                                      posY[arregloAleatorio[8]] = pmy;
-                posX[arregloAleatorio[9]] = pmx + (1 * 36 * Math.cos(radianAngle));   posY[arregloAleatorio[9]] = pmy + (1*36/2);
-                posX[arregloAleatorio[10]]= pmx + (1 * 36 * Math.cos(radianAngle));   posY[arregloAleatorio[10]]= pmy + (3*36/2);
-                posX[arregloAleatorio[11]]= pmx + (2 * 36 * Math.cos(radianAngle));   posY[arregloAleatorio[11]]= pmy - (2*36);
-                posX[arregloAleatorio[12]]= pmx + (2 * 36 * Math.cos(radianAngle));   posY[arregloAleatorio[12]]= pmy - 36;
-                posX[arregloAleatorio[13]]= pmx + (2 * 36 * Math.cos(radianAngle));   posY[arregloAleatorio[13]]= pmy;
-                posX[arregloAleatorio[14]]= pmx + (2 * 36 * Math.cos(radianAngle));   posY[arregloAleatorio[14]]= pmy + (2*36/2);
-                posX[arregloAleatorio[15]]= pmx + (2 * 36 * Math.cos(radianAngle));   posY[arregloAleatorio[15]]= pmy + (4*36/2);
-            }
-
-            class Bola{
-                constructor(numeroDeBola, tipoDeBola, bola){
-                    this.numeroDeBola = numeroDeBola;
-                    this.tipoDeBola = tipoDeBola;
-                    this.onTable = true;
-                    this.bola = bola;
-                }
-                
-                getNumeroDeBola(){
-                    return this.numeroDeBola;
-                }
-                
-                getTipoDeBola(){
-                    return this.tipoDeBola;
-                }
-
-                getOnTable(){
-                    return this.onTable;
-                }
-
-                getBola(){
-                    return this.bola;
-                }
-                
-                setNumeroDeBola(numeroDeBola){
-                    this.numeroDeBola = numeroDeBola;
-                }
-                
-                setTipoDeBola(tipoDeBola){
-                    this.tipoDeBola = tipoDeBola;
-                }
-
-                setOnTable(onTable){
-                    this.onTable = onTable;
-                }
-                
-                setBola(bola){
-                    this.bola = bola;
-                }
-            }
-
-        </script>
-    </head>
-
-    <body>
-        <!--
-        <div class="space-block"></div>
-
-        <table width="100%">
-            <tr>
-                <td rowspan="2" width="15%" style="text-align:center;"><img src="img/user.png" width="50%"></td>
-                <td width="30%"><div id="lblUser1Id">User1</div></td>
-                <td rowspan="2" width="15%" style="text-align:center;"><img src="img/user.png" width="50%"></td>
-                <td width="35%"><div id="lblUser2Id">User2</div></td>
-            </tr>
-            <tr>
-                <td>
-                    <img src="img/ball1.png" height="50px" width="50px">
-                    <img src="img/ball2.png" height="50px" width="50px">
-                    <img src="img/ball3.png" height="50px" width="50px">
-                    <img src="img/ball4.png" height="50px" width="50px">
-                    <img src="img/ball5.png" height="50px" width="50px">
-                    <img src="img/ball6.png" height="50px" width="50px">
-                    <img src="img/ball7.png" height="50px" width="50px">
-                </td>
-                <td>
-                    <img src="img/ball9.png" height="50px" width="50px">
-                    <img src="img/ball10.png" height="50px" width="50px">
-                    <img src="img/ball11.png" height="50px" width="50px">
-                    <img src="img/ball12.png" height="50px" width="50px">
-                    <img src="img/ball13.png" height="50px" width="50px">
-                    <img src="img/ball14.png" height="50px" width="50px">
-                    <img src="img/ball15.png" height="50px" width="50px">
-                </td>
-            </tr>
-        </table>
-        <script>/*
-            var urlParams = new URLSearchParams(window.location.search);
-            document.getElementById("lblUser1Id").innerHTML = urlParams.get('player1Name');
-            alert((new URLSearchParams(window.location.search)).get('player1Name'));
-            alert(""+nombreDeJugador1);
-        */</script>
-        -->
-    </body>    
 </html>

@@ -69,11 +69,13 @@
                 this.port = port;
                 this.setUserIp();
             }
-            Synapse.prototype.findServers = function (maxInParallel, timeout, addServersInProgress, addServersInFinish, addServersInFail, ipMin, ipMax, typeB) {
+            Synapse.prototype.findServers = function (maxInParallel, timeout, addServersInProgress, addServersInFinish, addServersInFail, ipMin, ipMax, typeB, ip) {
                 
+                var ipActual = ip;
                 var ipCurrent = ipMin, numInParallel = 0, servers = [];
                 var ipHigh = ipMax;
-                var baseIp = "192.168.43.1"//"10.242.32.1"//this.getUserIp(); // "192.168.0.1" //modificar
+                //var baseIp = this.getUserIp();//ipActual;//"10.242.32.1"//this.getUserIp(); // "192.168.0.1"
+                var baseIp = "192.168.1.12";
                 var port = this.port.toString();
                 var toSplit = baseIp;
                 var ipBase = toSplit.split(".", 3);
@@ -111,9 +113,8 @@
                                 typeof addServersInProgress === "function")
                             {
                             socket.send("GETSERVERNAME")
-                            //wwun
-                            //alert("synapse.js: GETSERVERNAME");
-                            addServersInProgress(socket.url);
+
+                            addServersInProgress(socket.url);//
                             }
                             --numInParallel;
                             next();
@@ -123,7 +124,7 @@
                        socket.onmessage = function (evt) { 
                           var received_msg = evt.data;
                           addServersInProgress(socket.url, received_msg);
-                          //alert("synapse.js: received_msg "+received_msg); //wwun
+                          //alert("Se obtuvo nombre del servidor");
                        };
                     socket.onerror = function (err) {
                         if (socket) {

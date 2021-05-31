@@ -14,21 +14,30 @@
     <script src="../Logic/connect.js"></script>
 </head>
 
-
-<body style="background-image: url('../Assets/menu/FORNAME1PLAYER.jpg'); background-repeat: no-repeat;"> <!--wwun-->
+<body style="background-image: url('../Assets/menu/FORNAME1PLAYER1920x1080.png'); background-repeat: no-repeat;"> <!--wwun-->
+<!--<body style="background-color:#02498F">--> <!--wwun-->
 <!--<body>-->
+
+    <div style="height: 10%;"></div> 
+
+    <h1 style="color:white; font-size:48px; text-align:center;">Ingresa tu usuario desde la aplicación</h1>
     
     <div id="qrcode" style="position: relative; left: 43%; top: 10%;"></div>
     
     <input id="text" type="hidden" value=" " style="width:10%" /><br />
 
     <script type="text/javascript">
+
+      var nombreyAvatarDeJugador1 = "";
+      var nombreyAvatarDeJugador2 = "";
+    
       var qrcode = new QRCode(document.getElementById("qrcode"), {
         width: 200,
         height: 200
       });
 
       function makeCode() {
+
         var elText = document.getElementById("text");
 
         if (!elText.value) {
@@ -43,8 +52,9 @@
         var res = currentLocation.split("=");
 
         if (res[1] != null)
-          qrcode.makeCode(res[1]);
-
+          var ip = res[1].split("&");
+          qrcode.makeCode(ip[0]);
+          //qrcode.makeCode(res[1]);
       }
 
       makeCode();
@@ -66,14 +76,14 @@
 
       <div style="text-align: center;">
         <img src="../Assets/menu/REDCYRCLEBUTTON.png" height="3%" width="3%" id="btnReady1"></img>
-        <input style="height: 25px; background-color: transparent; border: none; outline: none; border-bottom:1px solid #fff; color: #555; font-style: italic; font-size: 24px;" type="text" name="txtNombreJugador1" id="txtNombreJugador1" value="Jugador1" onfocus="this.value='';" size="18"></input>
+        <input style="height: 25px; background-color: transparent; border: none; outline: none; border-bottom:1px solid #fff; color: #555; font-style: italic; font-size: 32px;" type="text" name="txtNombreJugador1" id="txtNombreJugador1" value="Jugador1" onfocus="this.value='';" size="18"></input>
       </div>
       
       <div style="height: 40px;"></div>
       
       <div style="text-align: center;">
         <img src="../Assets/menu/REDCYRCLEBUTTON.png" height="3%" width="3%" id="btnReady2"></img>
-        <input style="height: 25px; background-color: transparent; border: none; outline: none; border-bottom:1px solid #fff; color: #555; font-style: italic; font-size: 24px;" type="text" name="txtNombreJugador2" id="txtNombreJugador2" value="Jugador2" onfocus="this.value='';" size="18"></input>
+        <input style="height: 25px; background-color: transparent; border: none; outline: none; border-bottom:1px solid #fff; color: #555; font-style: italic; font-size: 32px;" type="text" name="txtNombreJugador2" id="txtNombreJugador2" value="Jugador2" onfocus="this.value='';" size="18"></input>
       </div>
     </div>
 
@@ -82,48 +92,24 @@
       //recibe el nombre
       //cambia el botón
 
-      function setNameAndButton(whichPlayer, playerName){
-        //valida qué jugador ha ingresado el nombre
-        if(whichPlayer.includes("player1")){
-          document.getElementById("txtNombreJugador1").value = playerName;
-          setTimeout(changeButton("btnReady1"), 1000);
-        }else{
-          if(whichPlayer.includes("player2")){
-            document.getElementById("txtNombreJugador2").value = playerName;
-            setTimeout(changeButton("btnReady2"), 1000);
-          }
-        }
+      function setNameAndButton(playerName){
+        nombreyAvatarDeJugador2 = playerName;
+        var nombreDeJugador2 = nombreyAvatarDeJugador2.split("|");
+        document.getElementById("txtNombreJugador2").value = nombreDeJugador2[0];
+        alert("nombreyAvatarDeJugador2 "+nombreyAvatarDeJugador2);
+        setTimeout(changeButton(), 1000);
       }
 
-      function changeButton(botonReady){
-        //cambia el botón de rojo a verde
-        if(botonReady=="btnReady1"){
-          document.getElementById("btnReady1").src = "../Assets/menu/GREENCYRCLEBUTTON.png";
-          console.log("inside changeButton if(btnReady1)");
-        }else{
-          if(botonReady=="btnReady2"){
-            document.getElementById("btnReady2").src = "../Assets/menu/GREENCYRCLEBUTTON.png";
-          }
-        }
-        //validando si ambos jugadores han ingresado su nombre
-        if(document.getElementById("txtNombreJugador1").value != "Jugador1" 
-        && document.getElementById("txtNombreJugador2").value != "Jugador2"){
-          setTimeout(goToGameAndSendNames, 1000);
-        }
+      function changeButton(){
+        document.getElementById("btnReady2").src = "../Assets/menu/GREENCYRCLEBUTTON.png";
+        setTimeout(goToGameAndSendNames, 1000);
         return;
-      }
-
-      function goToGameAndSendName(){
-        var nombreDeJugador1 = document.getElementById("txtNombreJugador1").value;
-        var nombreDeJugador2 = document.getElementById("txtNombreJugador2").value;
-        establishConnectionGame(nombreDeJugador1, nombreDeJugador2);
       }
 
       function goToGameAndSendNames(){
           //toma los nombres ingresados de los jugadores para enviarlos al juego
-          var nombreDeJugador1 = document.getElementById("txtNombreJugador1").value;
-          var nombreDeJugador2 = document.getElementById("txtNombreJugador2").value;
-          establishConnectionGame(nombreDeJugador1, nombreDeJugador2);
+          //var nombreDeJugador2 = document.getElementById("txtNombreJugador2").value;
+          establishConnectionGame(nombreyAvatarDeJugador1, nombreyAvatarDeJugador2);
       }
 
       var webSocket = {};
@@ -147,26 +133,24 @@
         }
         create() {
           this.nombreJ4text = this.add.text(1114, 626, this.nombreJ4, { fontFamily: '"Arial Black"', fontSize: 24, fill: 'black', });
+
+          nombreyAvatarDeJugador1 = (new URLSearchParams(window.location.search)).get('player1NameAndAvatar');
+          var nombreDeJugador1 = nombreyAvatarDeJugador1.split("|");
+          document.getElementById("txtNombreJugador1").value = nombreDeJugador1[0];
+          //alert(""+nombreDeJugador1[0]);
+
+          document.getElementById("btnReady1").src = "../Assets/menu/GREENCYRCLEBUTTON.png";
         }
         update() {
-        //console.log("aqui inicio " + cursor + " aqui termina");
-            if(cursor.includes("nombreDelJugador1")){
-                var nombreTmp = cursor.split(":");
-                setNameAndButton("player1", nombreTmp[1]);
-            }else{
-              if(cursor.includes("nombreDelJugador2")){
-                var nombreTmp2 = cursor.split(":");
-                //TODO
-                setNameAndButton("player2", nombreTmp2[1]);
-              }
+            if(cursor.includes("nombreDelJugador2")){
+              alert("include");
+              var nombreTmp2 = cursor.split(":");
+              setNameAndButton(nombreTmp2[1]);
             }
         }
           
-          
       }
 
-      var SCREEN_WIDTH = 1920;
-      var SCREEN_HEIGHT = 1080;
       var config = {
         type: Phaser.arcade,
 

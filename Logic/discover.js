@@ -1,7 +1,8 @@
 var listAvailableServers = [];
 
 function entablishConnection(e) {
-    $(location).attr("href", "./Game/menu.html?url=" + e)
+    //$(location).attr("href", "./Game/menu.html?url=" + e)
+    $(location).attr("href", "./Game/player1.html?url=" + e)
 }
 
 function availableServersToDiv(e, name) {
@@ -14,6 +15,7 @@ function availableServersToDiv(e, name) {
             n = '<button class="btn-server" type="button" id="' + (e + 2) + '" class="buttonPr" onclick="entablishConnection(\'' + e + "');\" >" + ("Sala" + nombre) + "</button><br>";
         document.getElementById("availableServers").innerHTML += n
     }
+    //alert("e: "+e); //wwun
 }
 var findIpBtimer = 0;
 var findIpB = 0;

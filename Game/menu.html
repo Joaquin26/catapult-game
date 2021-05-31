@@ -16,9 +16,9 @@
 <body>
 
     <div style="position: relative;">
-        <!--
+        
         <div class="divMenuPrincipal"> <img src="../Assets/menu/MENU.png" height="100%" width="100%"></img> </div>
-        -->
+        
 
         <div class="divSelector">
             <img src="../Assets/menu/SELECTOR.png" height="70%" width="70%" id="imgSelector"></img>
@@ -36,6 +36,8 @@
 
         <script type="text/javascript">
 
+        var nombreyAvatarDeJugador1 = "";
+
         var selectorStyle = document.querySelector(".divSelector");
             selectorStyle.style.top = 80 + 'px';
             console.log("posición actual: "+ parseInt(selectorStyle.style.top));
@@ -46,10 +48,11 @@
                 if(e.keyCode == 13 || e.keyCode == 32){  // barra espaciadora y enter
                     if(parseInt(selectorStyle.style.top) == 80){    //cuando se ubica en una posición
                         console.log("80!");
-                        goPlayer1();
+                        establishConnectionGame(nombreyAvatarDeJugador1, "Machine|ironman");
+                        //goPlayer1();
                     }
                     if(parseInt(selectorStyle.style.top) == 230){
-                        goPlayer2();
+                        goPlayer2(nombreyAvatarDeJugador1);
                     }
                     if(parseInt(selectorStyle.style.top) == 380){
                         onclick="goInstruccions()";
@@ -74,6 +77,7 @@
         var element;
         var obj;
         var cursor = "";
+        var cursors = "";
         var audio = new Audio("../Assets/music/intro_sfx.mp3");
         audio.addEventListener('ended', function () {
             this.currentTime = 0;
@@ -95,10 +99,16 @@
             }
             preload ()
             {
+
                 this.load.image('cue', 'https://i.ibb.co/TqQtDMG/cue-Button.png');
                 this.load.image('arrow', 'https://i.ibb.co/pW7Vr0b/taco-Madera-Dibujo-Punta-Delgada300x10.png');//wwun
             }
             create() {
+
+                nombreyAvatarDeJugador1 = (new URLSearchParams(window.location.search)).get('player1NameAndAvatar');
+
+                cursors = this.input.keyboard.createCursorKeys();
+
                 this.nombreJ4text = this.add.text(1114, 626, this.nombreJ4, { fontFamily: '"Arial Black"', fontSize: 24, fill: 'black', });
 
                 //temp para pruebas de concepto
@@ -121,7 +131,7 @@
                 .on('pointerup', () => {
                     tmpEstablishConnectionGameWhiteBall();
                 });
-                //fin de temp para pruebas de concepto
+                //fin de temp para pruebas de concepto                
             }
 
             //temp para pruebas de concepto
@@ -151,36 +161,38 @@
             //fin de temp para pruebas de concepto
             
             update() {
-                console.log("aqui inicio " + cursor + " aqui termina");
+                //console.log("aqui inicio " + cursor + " aqui termina");
                 // movimientos de cursor
-                if(cursor == "UP" && bloqueoUp == false){        // mover abajo
+                if(cursor == "ARROWUP1" && bloqueoUp == false){        // mover abajo
                     if(parseInt(selectorStyle.style.top) > 80 && parseInt(selectorStyle.style.top) < 400){
                         selectorStyle.style.top = (parseInt(selectorStyle.style.top) - 150) + 'px';
                         bloqueoUp = true;
                     }
                 }
-                if(cursor == "STOPUP"){        // mover abajo
+                if(cursor == "STOPARROWUP1"){        // mover abajo
                     bloqueoUp = false;
                 }
-                if(cursor == "DOWN" && bloqueoDown == false){        // mover arriba
+                if( (cursor == "ARROWDOWN1") && bloqueoDown == false){        // mover arriba
                     if(parseInt(selectorStyle.style.top) < 370){
                         selectorStyle.style.top = (parseInt(selectorStyle.style.top) + 150) + 'px';
                         bloqueoDown = true;
                     }
                 }
-                if(cursor == "STOPDOWN"){        // mover abajo
+                if(cursor == "STOPARROWDOWN1"){        // mover abajo
                     bloqueoDown = false;
                 }
                 // fin de movimientos de cursor
 
                 //selección de opciones
-                if(cursor == "A" || cursor == "B"){  // barra espaciadora y enter
+                if(cursor.includes("BX1") || cursor.includes("BB1")){  // barra espaciadora y enter
                     if(parseInt(selectorStyle.style.top) == 80){    //cuando se ubica en una posición
-                        console.log("80!");
-                        goPlayer1();
+                        establishConnectionGame(nombreyAvatarDeJugador1, "Machine|ironman");
+                        //goPlayer1();
                     }
                     if(parseInt(selectorStyle.style.top) == 230){
-                        goPlayer2();
+                        //goPlayer2(nombreyAvatarDeJugador1);
+                        goPlayer2(nombreyAvatarDeJugador1);
+                        //goPlayer2();
                     }
                     if(parseInt(selectorStyle.style.top) == 380){
                         onclick="goInstruccions()";

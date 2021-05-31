@@ -14,26 +14,30 @@
  </head>
 
 
-<body style="background-image: url('../Assets/menu/FORNAME1PLAYER.jpg'); background-repeat: no-repeat;">
-    <div style="position: relative;">
-        <div style="position: relative; height: 220px; left: 300px;">
+<body style="background-image: url('../Assets/menu/FORNAME1PLAYER1920x1080.png'); background-repeat: no-repeat;">
+    
+        <div style="height: 20%;"></div> 
+        <h1 style="color:white; font-size:48px; text-align:center;">Ingresa tu usuario desde la aplicación</h1>
+        <div style="position: relative; height: 10%; left: 300px;">
         </div>
         
         <div style="text-align: center;">
             <img src="../Assets/menu/REDCYRCLEBUTTON.png" height="3%" width="3%" id="btnReady"></img>
-            <input style="height: 25px; background-color: transparent; border: none; outline: none; border-bottom:1px solid #fff; color: #555; font-style: italic; font-size: 24px;" type="text" name="txtNombre" id="txtNombre" value="Jugador1" onfocus="this.value='';" size="18"></input>
+            <input style="height: 25px; background-color: transparent; border: none; outline: none; border-bottom:1px solid #fff; color: #555; font-style: italic; font-size: 32px;" type="text" name="txtNombre" id="txtNombre" value="Jugador1" onfocus="this.value='';" size="18"></input>
         </div>
-    </div>
+    
 
     <script type="text/javascript">
+
+        var nombreyAvatarDeJugador1 = "";
 
         //recibe el nombre
         //cambia el botón
         function setNameAndButton(nombreDeJugador){
-            //document.getElementById("txtNombre").innerHTML = "innerHTML: ";//+nombreDeJugador;
-            document.getElementById("txtNombre").value = nombreDeJugador;
+            nombreyAvatarDeJugador1 = nombreDeJugador;
+            var nombreDeJugador1 = nombreyAvatarDeJugador1.split("|");
+            document.getElementById("txtNombre").value = nombreDeJugador1[0];
             setTimeout(changeButton, 1000);
-            //alert(nombreDeJugador);
         }
 
         function changeButton(){
@@ -42,11 +46,7 @@
         }
 
         function goToGameAndSendName(){
-            //System.out.print("2 cursor to String: "+ cursor.toString() );
-            var nombreDeJugador = document.getElementById("txtNombre").value;
-            //alert(nombreDeJugador);
-            //establishConnectionGame();
-            establishConnectionGame(nombreDeJugador, "Machine");
+            goToMenu(nombreyAvatarDeJugador1);
         }
 
         var webSocket = {};
@@ -61,8 +61,7 @@
                 this.play();
             },
             false);
-        //audio.play();
-
+        
         class SceneMenu extends Phaser.Scene {
             constructor() {
                 super('SceneMenu');
@@ -84,7 +83,6 @@
                 );
             }
             update() {
-                console.log("aqui inicio " + cursor + " aqui termina");
                 if(cursor.includes("nombreDelJugador1")){
                     var nombreTmp = cursor.split(":");
                     setNameAndButton(nombreTmp[1]);
@@ -102,7 +100,6 @@
             width: 1920,
             height: 1080,
             transparent: true,
-            //backgroundColor: '#222288',
             dom: {
                 createContainer: true
             },
